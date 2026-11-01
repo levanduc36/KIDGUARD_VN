@@ -1,0 +1,112 @@
+[
+  {
+    "original": "C_01.mp4",
+    "output": "public/videos/bao-luc-hoc-duong/c-01.mp4",
+    "bytes": 3022367
+  },
+  {
+    "original": "C_02.mp4",
+    "output": "public/videos/bao-luc-hoc-duong/c-02.mp4",
+    "bytes": 3158219
+  },
+  {
+    "original": "C_03.mp4",
+    "output": "public/videos/bao-luc-hoc-duong/c-03.mp4",
+    "bytes": 4567451
+  },
+  {
+    "original": "C_04a.mp4",
+    "output": "public/videos/bao-luc-hoc-duong/c-04a.mp4",
+    "bytes": 4798450
+  },
+  {
+    "original": "end 2a.1.mp4",
+    "output": "public/videos/lua-dao/end-2a-1.mp4",
+    "bytes": 3210040
+  },
+  {
+    "original": "end 2a.3.mp4",
+    "output": "public/videos/lua-dao/end-2a-3.mp4",
+    "bytes": 1930834
+  },
+  {
+    "original": "end 2b.1.mp4",
+    "output": "public/videos/lua-dao/end-2b-1.mp4",
+    "bytes": 3198742
+  },
+  {
+    "original": "end 2c.1.mp4",
+    "output": "public/videos/lua-dao/end-2c-1.mp4",
+    "bytes": 3191341
+  },
+  {
+    "original": "end 2c.2.mp4",
+    "output": "public/videos/lua-dao/end-2c-2.mp4",
+    "bytes": 1156962
+  },
+  {
+    "original": "end 4.1.mp4",
+    "output": "public/videos/lua-dao/end-4-1.mp4",
+    "bytes": 2090565
+  },
+  {
+    "original": "end 4.2.mp4",
+    "output": "public/videos/lua-dao/end-4-2.mp4",
+    "bytes": 1048425
+  },
+  {
+    "original": "end 6.2.mp4",
+    "output": "public/videos/lua-dao/end-6-2.mp4",
+    "bytes": 1183735
+  },
+  {
+    "original": "end 6.3.mp4",
+    "output": "public/videos/lua-dao/end-6-3.mp4",
+    "bytes": 824468
+  },
+  {
+    "original": "end 6.4.mp4",
+    "output": "public/videos/lua-dao/end-6-4.mp4",
+    "bytes": 1643965
+  },
+  {
+    "original": "sau option 1.1.mp4",
+    "output": "public/videos/lua-dao/sau-option-1-1.mp4",
+    "bytes": 1646466
+  },
+  {
+    "original": "scene 1.mp4",
+    "output": "public/videos/lua-dao/scene-1.mp4",
+    "bytes": 4055563
+  },
+  {
+    "original": "scene 2a.mp4",
+    "output": "public/videos/lua-dao/scene-2a.mp4",
+    "bytes": 1710486
+  },
+  {
+    "original": "scene 2b.mp4",
+    "output": "public/videos/lua-dao/scene-2b.mp4",
+    "bytes": 1456489
+  },
+  {
+    "original": "scene 2c.mp4",
+    "output": "public/videos/lua-dao/scene-2c.mp4",
+    "bytes": 782415
+  },
+  {
+    "original": "scene 4.mp4",
+    "output": "public/videos/lua-dao/scene-4.mp4",
+    "bytes": 3053764
+  },
+  {
+    "original": "scene 6.mp4",
+    "output": "public/videos/lua-dao/scene-6.mp4",
+    "bytes": 659905
+  },
+  {
+    "original": "scene 7.mp4",
+    "output": "public/videos/lua-dao/scene-7.mp4",
+    "bytes": 2131854
+  }
+]

@@ -1,0 +1,576 @@
+[
+  {
+    "id": "lua-dao",
+    "title": "Lừa đảo",
+    "category": "online",
+    "topic": "Nhận diện lừa đảo",
+    "theme": "mint",
+    "icon": "shield",
+    "description": "Một lời nhờ giúp ở trung tâm thương mại mở ra những tình huống bất ngờ. Em sẽ lựa chọn thế nào?",
+    "duration": "5–10 phút",
+    "status": "published",
+    "version": 20261101,
+    "startNode": "Scene 1",
+    "cover": "/videos/lua-dao/scene-1.webp",
+    "mediaNote": "Đã có video cho toàn bộ các nhánh.",
+    "nodes": {
+      "Scene 1": {
+        "title": "Một lời nhờ giúp",
+        "text": "(Góc nhìn thứ 1 - Góc nhìn của em học sinh lớp 8 - 9). Sáng Chủ Nhật, bạn đứng một mình ở sảnh TTTM đợi nhóm bạn đi xem phim. Một ông cụ lớn tuổi, ăn mặc gọn gàng, vẻ mặt hốt hoảng tiến lại gần, đưa chiếc điện thoại đời mới ra trước mặt bạn.\n\nMàn hình đang mở một trang web trông giống thông tin của một phòng khám bình thường. Bạn thấy ông rất cuống và muốn giúp, đó là một cảm xúc tốt và bình thường. Bạn sẽ làm gì?",
+        "video": {
+          "src": "/videos/lua-dao/scene-1.mp4",
+          "poster": "/videos/lua-dao/scene-1.webp"
+        },
+        "choices": [
+          {
+            "id": "1.1",
+            "text": "Bạn cầm lấy điện thoại của ông, nhìn thẳng vào màn hình, đọc to dãy số và dùng ngón tay bấm Xác nhận. Ông lấy lại máy, cảm ơn rồi đi thẳng.",
+            "points": 0,
+            "feedback": "Muốn giúp người lớn tuổi là một tấm lòng tốt, không có gì sai.",
+            "next": "After 1.1"
+          },
+          {
+            "id": "1.2",
+            "text": "Hơi ngại chạm vào đồ người lạ. Bạn không cầm máy, chỉ rướn người nhìn thẳng vào camera, đọc to dãy số để ông ấy nghe. Ông ấy bảo “Cháu đọc to lên ông không nghe rõ”, bạn đọc đi đọc lại 3 lần rồi ông ấy cảm ơn và đi mất.",
+            "points": 1,
+            "feedback": ".",
+            "next": "Scene 4"
+          },
+          {
+            "id": "1.3",
+            "text": "Bạn thấy hơi lo nên đứng lùi lại, quay mặt đi chỗ khác, chỉ liếc mắt đọc nhanh dãy số rồi nói: “Cháu đọc rồi đấy, ông nghe rõ chưa ạ?”.",
+            "points": 1,
+            "feedback": "Lựa chọn đã được ghi nhận. Cùng xem câu chuyện tiếp theo nhé.",
+            "next": "Scene 6"
+          },
+          {
+            "id": "1.4",
+            "text": "Bạn hơi áy náy vì không giúp trực tiếp được, nhưng vẫn lùi lại 2 bước, giơ tay: “Cháu không thao tác điện thoại của người lạ được ạ. Cháu dẫn ông ra quầy bảo vệ nhờ các cô chú giúp nhé!” Ông lẩm bẩm rồi bỏ đi. Bạn vẫn đến quầy bảo vệ kể lại chuyện vừa rồi, rồi nhắn cho mẹ.",
+            "points": 2,
+            "feedback": "⭐Cách làm tốt nhất. Bạn giúp theo cách an toàn hơn và có người lớn cùng biết.",
+            "next": "Scene 7"
+          }
+        ],
+        "kind": "question"
+      },
+      "Scene 2A": {
+        "title": "Cuộc gọi khẩn cấp",
+        "text": "Chiều hôm đó, mẹ bạn đang họp ở cơ quan thì nhận được cuộc gọi từ một số lạ. Giọng người đó gấp gáp:",
+        "video": {
+          "src": "/videos/lua-dao/scene-2a.mp4",
+          "poster": "/videos/lua-dao/scene-2a.webp"
+        },
+        "choices": [
+          {
+            "id": "2A.1",
+            "text": "Mẹ rất hoảng vì lo cho con, mở app ngân hàng chuyển thẳng 5 triệu vào số tài khoản người đó cung cấp.",
+            "points": 0,
+            "feedback": "Cùng xem diễn biến tiếp theo và nhìn lại lựa chọn của mình nhé.",
+            "next": "END_2A.1"
+          },
+          {
+            "id": "2A.2",
+            "text": "Mẹ rất sốc, tay run rẩy nhưng vẫn cố bình tĩnh yêu cầu: “Chị kết bạn Zalo với tôi và cho tôi gọi video nhìn mặt con tôi một cái rồi tôi chuyển tiền ngay!”.",
+            "points": 1,
+            "feedback": "Lựa chọn đã được ghi nhận. Cùng xem câu chuyện tiếp theo nhé.",
+            "next": "Scene 2B"
+          },
+          {
+            "id": "2A.3",
+            "text": "Mẹ cố nén hoảng sợ, hỏi ngược lại: “Được, nếu con tôi đang ở đó, bảo cháu đọc đúng \"mật khẩu gia đình\" thì tôi chuyển tiền ngay!”. Người gọi ấp úng rồi vội vàng cúp máy. Mẹ liền gọi cho phụ huynh của người bạn đi xem phim cùng bạn để xác minh.",
+            "points": 2,
+            "feedback": "Cùng xem diễn biến tiếp theo và nhìn lại lựa chọn của mình nhé.",
+            "next": "END_2A.3"
+          }
+        ],
+        "kind": "question"
+      },
+      "END_2A.1": {
+        "title": "Cùng nhìn lại lựa chọn",
+        "text": "",
+        "analysis": "Kết quả: Chưa an toàn. Tiền đã chuyển và số điện thoại kia không liên lạc lại được. Mẹ đến TTTM thì thấy bạn vừa đi từ rạp chiếu phim ra, an toàn.\nCảm xúc lúc đó: Lo cho con là phản ứng rất tự nhiên của bất kỳ cha mẹ nào.\nĐiều đang diễn ra: Người gọi tạo cảm giác khẩn cấp để mẹ chưa kịp kiểm tra, và dùng khuôn mặt, giọng nói thu được lúc sáng để dựng câu chuyện. Lỗi nằm ở hành vi lừa đảo, không phải ở lòng tốt của bạn hay sự lo lắng của mẹ.\nLần sau có thể: Cúp máy, gọi thẳng vào số của con hoặc gọi người thân, cô giáo để kiểm tra trước khi chuyển tiền. Nếu đã chuyển, báo ngay cho công an và ngân hàng.",
+        "video": {
+          "src": "/videos/lua-dao/end-2a-1.mp4",
+          "poster": "/videos/lua-dao/end-2a-1.webp"
+        },
+        "choices": [],
+        "kind": "ending",
+        "next": null,
+        "help": "KHI CẦN GIÚP ĐỠ. Bạn không phải tự xử lý một mình. Bạn hãy tìm đến:\n- Bố mẹ hoặc người lớn trong gia đình mà bạn tin tưởng\n- Thầy cô chủ nhiệm\n- Chuyên viên tâm lý học đường\n- Tổng đài quốc gia bảo vệ trẻ em: 111 (miễn phí)\n- Nếu đang gặp nguy hiểm hoặc đã bị lừa tiền: báo công an (113)"
+      },
+      "END_2A.3": {
+        "title": "Cùng nhìn lại lựa chọn",
+        "text": "",
+        "analysis": "An toàn. Phụ huynh của bạn đi cùng nghe máy và xác nhận các con vẫn đang an toàn ở rạp phim. Mẹ báo công an về cuộc gọi lạ.\nCảm xúc lúc đó: Mẹ vẫn lo lắng và tim đập nhanh, đó là phản ứng rất bình thường.\nĐiều đang diễn ra: Đối tượng lừa đảo thúc ép để mẹ không có thời gian suy nghĩ. Việc mẹ hỏi vặn lại bằng \"mật khẩu gia đình\" và gọi kiểm tra chéo qua một người khác đã phá vỡ hoàn toàn áp lực đó.\nLần sau có thể: Dù con chưa có điện thoại riêng, gia đình vẫn luôn cần thống nhất một \"mật khẩu gia đình\" để xác minh trong tình huống khẩn cấp. Đồng thời, bố mẹ nên lưu số điện thoại của giáo viên và phụ huynh các bạn chơi thân với con để kiểm chứng khi cần thiết.",
+        "video": {
+          "src": "/videos/lua-dao/end-2a-3.mp4",
+          "poster": "/videos/lua-dao/end-2a-3.webp"
+        },
+        "choices": [],
+        "kind": "ending",
+        "next": null,
+        "help": "KHI CẦN GIÚP ĐỠ. Bạn không phải tự xử lý một mình. Bạn hãy tìm đến:\n- Bố mẹ hoặc người lớn trong gia đình mà bạn tin tưởng\n- Thầy cô chủ nhiệm\n- Chuyên viên tâm lý học đường\n- Tổng đài quốc gia bảo vệ trẻ em: 111 (miễn phí)\n- Nếu đang gặp nguy hiểm hoặc đã bị lừa tiền: báo công an (113)"
+      },
+      "Scene 2B": {
+        "title": "Có thật là con không?",
+        "text": "(Góc nhìn thứ 3 - Phụ huynh). Người gọi lập tức gọi video lại. Màn hình hiện lên khuôn mặt giống bạn, đang mếu máo (bằng chính giọng nói của bạn).\n\n\nChỉ 3 giây sau, cuộc gọi bị ngắt. Người gọi nhắn tin:",
+        "video": {
+          "src": "/videos/lua-dao/scene-2b.mp4",
+          "poster": "/videos/lua-dao/scene-2b.webp"
+        },
+        "choices": [
+          {
+            "id": "2B.1",
+            "text": "Nhìn thấy mặt và nghe đúng giọng con mình, mẹ gục ngã, tin tưởng tuyệt đối và chuyển tiền ngay lập tức.",
+            "points": 0,
+            "feedback": "Cùng xem diễn biến tiếp theo và nhìn lại lựa chọn của mình nhé.",
+            "next": "END_2B.1"
+          },
+          {
+            "id": "2B.2",
+            "text": "Mẹ rất sợ, mắt đã đỏ hoe nhưng vẫn dừng lại hỏi thêm thông tin: “Chị cho tôi xin tên Bệnh viện, khoa nào, phòng cấp cứu số mấy để người nhà tôi ở gần đó chạy qua nộp tiền mặt!”",
+            "points": 2,
+            "feedback": "Lựa chọn đã được ghi nhận. Cùng xem câu chuyện tiếp theo nhé.",
+            "next": "Scene 2C"
+          }
+        ],
+        "kind": "question"
+      },
+      "END_2B.1": {
+        "title": "Cùng nhìn lại lựa chọn",
+        "text": "",
+        "analysis": "Kết quả: Chưa an toàn. Tiền đã chuyển và số điện thoại kia không liên lạc lại được. Mẹ đến TTTM thì thấy bạn vừa đi từ rạp chiếu phim ra, an toàn.\nCảm xúc lúc đó: Thấy và nghe giống con mình khóc, ai cũng khó giữ bình tĩnh.\nĐiều đang diễn ra: AI có thể ghép khuôn mặt và giọng nói từ một đoạn ghi hình ngắn để tạo video giả. Nhìn thấy mặt, nghe thấy giọng chưa đủ để chắc đó là con mình.\nLần sau có thể: Cúp máy, gọi trực tiếp vào số của con, hoặc hỏi “mật khẩu gia đình” mà người lạ không thể biết.",
+        "video": {
+          "src": "/videos/lua-dao/end-2b-1.mp4",
+          "poster": "/videos/lua-dao/end-2b-1.webp"
+        },
+        "choices": [],
+        "kind": "ending",
+        "next": null,
+        "help": "KHI CẦN GIÚP ĐỠ. Bạn không phải tự xử lý một mình. Bạn hãy tìm đến:\n- Bố mẹ hoặc người lớn trong gia đình mà bạn tin tưởng\n- Thầy cô chủ nhiệm\n- Chuyên viên tâm lý học đường\n- Tổng đài quốc gia bảo vệ trẻ em: 111 (miễn phí)\n- Nếu đang gặp nguy hiểm hoặc đã bị lừa tiền: báo công an (113)"
+      },
+      "Scene 2C": {
+        "title": "Kiểm tra bằng một kênh khác",
+        "text": "(Góc nhìn thứ 3 - Phụ huynh). Người gọi nhắn lại một địa chỉ cực kỳ thuyết phục và khớp với thực tế:",
+        "video": {
+          "src": "/videos/lua-dao/scene-2c.mp4",
+          "poster": "/videos/lua-dao/scene-2c.webp"
+        },
+        "choices": [
+          {
+            "id": "2C.1",
+            "text": "Thấy địa chỉ bệnh viện quá chuẩn xác, mẹ nghĩ không thể là lừa đảo được nữa. Mẹ vừa khóc vừa bấm chuyển khoản một nửa số tiền.",
+            "points": 0,
+            "feedback": "Cùng xem diễn biến tiếp theo và nhìn lại lựa chọn của mình nhé.",
+            "next": "END_2C.1"
+          },
+          {
+            "id": "2C.2",
+            "text": "Mẹ tắt máy Zalo. Lập tức bấm số điện thoại di động gọi thẳng cho đường dây nóng của Bệnh viện.",
+            "points": 2,
+            "feedback": "Cùng xem diễn biến tiếp theo và nhìn lại lựa chọn của mình nhé.",
+            "next": "END_2C.2"
+          }
+        ],
+        "kind": "question"
+      },
+      "END_2C.1": {
+        "title": "Cùng nhìn lại lựa chọn",
+        "text": "",
+        "analysis": "Kết quả: Chưa an toàn. Tiền đã chuyển và số điện thoại kia không liên lạc lại được. Mẹ đến TTTM thì thấy bạn vừa đi từ rạp chiếu phim ra, an toàn.\nCảm xúc lúc đó: Càng nhiều chi tiết đúng, càng dễ tin; đó là phản ứng bình thường.\nĐiều đang diễn ra: Người gọi dùng chi tiết nghe rất thật và thúc giục “gấp lắm” để mẹ chưa kịp kiểm tra bằng nguồn khác.\nLần sau có thể: Dù địa chỉ nghe đúng, vẫn cúp máy, tự tra số bệnh viện để gọi.",
+        "video": {
+          "src": "/videos/lua-dao/end-2c-1.mp4",
+          "poster": "/videos/lua-dao/end-2c-1.webp"
+        },
+        "choices": [],
+        "kind": "ending",
+        "next": null,
+        "help": "KHI CẦN GIÚP ĐỠ. Bạn không phải tự xử lý một mình. Bạn hãy tìm đến:\n- Bố mẹ hoặc người lớn trong gia đình mà bạn tin tưởng\n- Thầy cô chủ nhiệm\n- Chuyên viên tâm lý học đường\n- Tổng đài quốc gia bảo vệ trẻ em: 111 (miễn phí)\n- Nếu đang gặp nguy hiểm hoặc đã bị lừa tiền: báo công an (113)"
+      },
+      "END_2C.2": {
+        "title": "Cùng nhìn lại lựa chọn",
+        "text": "",
+        "analysis": "Kết quả: An toàn hơn. Bệnh viện xác nhận không có ca nào như vậy. Gia đình không mất tiền.\nCảm xúc lúc đó: Mẹ bật khóc vì nhẹ nhõm, rất tự nhiên.\nĐiều đang diễn ra: Người gọi thúc ép để mẹ không kịp kiểm tra. Kiểm tra bằng một kênh khác (gọi bệnh viện, gọi con) đã phá vỡ sự thúc ép đó. Tuy vậy, khuôn mặt và giọng nói bạn thu lúc sáng vẫn có thể bị dùng lại.\nLần sau có thể: Kể ngay với bố mẹ chuyện ở TTTM, báo công an, nhắn người thân và bạn bè cẩn thận với tin nhắn nhờ chuyển tiền, cả nhà đặt một “mật khẩu gia đình”.",
+        "video": {
+          "src": "/videos/lua-dao/end-2c-2.mp4",
+          "poster": "/videos/lua-dao/end-2c-2.webp"
+        },
+        "choices": [],
+        "kind": "ending",
+        "next": null,
+        "help": "KHI CẦN GIÚP ĐỠ. Bạn không phải tự xử lý một mình. Bạn hãy tìm đến:\n- Bố mẹ hoặc người lớn trong gia đình mà bạn tin tưởng\n- Thầy cô chủ nhiệm\n- Chuyên viên tâm lý học đường\n- Tổng đài quốc gia bảo vệ trẻ em: 111 (miễn phí)\n- Nếu đang gặp nguy hiểm hoặc đã bị lừa tiền: báo công an (113)"
+      },
+      "Scene 4": {
+        "title": "Tin nhắn từ bạn thân",
+        "text": "(Góc nhìn thứ 3 - Bạn thân). Tối hôm đó, cậu bạn thân nhất cùng lớp đang ở nhà học bài thì nhận được tin nhắn thoại từ Facebook của bạn. Mở lên nghe, chính xác là giọng của bạn, cách xưng hô cũng y hệt:",
+        "video": {
+          "src": "/videos/lua-dao/scene-4.mp4",
+          "poster": "/videos/lua-dao/scene-4.webp"
+        },
+        "choices": [
+          {
+            "id": "4.1",
+            "text": "Nghe đúng giọng bạn thân, cậu bạn liền chuyển tiền ngay vào số tài khoản trong tin nhắn.",
+            "points": 0,
+            "feedback": "Cùng xem diễn biến tiếp theo và nhìn lại lựa chọn của mình nhé.",
+            "next": "END_4.1"
+          },
+          {
+            "id": "4.2",
+            "text": "Cậu bạn thấy lạ vì bạn chưa từng nhờ chuyển tiền hộ trước đây. Cậu gọi điện trực tiếp vào số di động của bạn để hỏi, rồi kể chuyện này với mẹ.",
+            "points": 2,
+            "feedback": "Cùng xem diễn biến tiếp theo và nhìn lại lựa chọn của mình nhé.",
+            "next": "END_4.2"
+          }
+        ],
+        "kind": "question"
+      },
+      "END_4.1": {
+        "title": "Cùng nhìn lại lựa chọn",
+        "text": "",
+        "analysis": "Kết quả: Chưa an toàn. Sau khi nhận được tiền, người gửi tin chặn cậu bạn. Sáng hôm sau cậu bạn nhắc chuyện 500k, bạn nói mình không hề nhắn, cậu bạn mở đoạn ghi âm giọng bạn ra. Cả hai đều bối rối và bực.\nCảm xúc lúc đó: Bạn thân tin vào giọng nói quen thuộc; bạn thì thấy mình bị oan và tức. Cả hai đều bình thường.\nĐiều đang diễn ra: Giọng nói có thể bị AI sao chép từ một đoạn thu ngắn, nên nghe đúng giọng chưa chắc là đúng người. Lỗi nằm ở người đã dùng giọng nói đó để lừa, không phải ở bạn hay cậu bạn.\nLần sau có thể: Với tin nhắn nhờ chuyển tiền, gọi thẳng vào số của bạn để hỏi trước. Hai bạn cùng kể với bố mẹ hoặc cô chủ nhiệm và báo cáo tài khoản bị mạo danh.",
+        "video": {
+          "src": "/videos/lua-dao/end-4-1.mp4",
+          "poster": "/videos/lua-dao/end-4-1.webp"
+        },
+        "choices": [],
+        "kind": "ending",
+        "next": null,
+        "help": "KHI CẦN GIÚP ĐỠ. Bạn không phải tự xử lý một mình. Bạn hãy tìm đến:\n- Bố mẹ hoặc người lớn trong gia đình mà bạn tin tưởng\n- Thầy cô chủ nhiệm\n- Chuyên viên tâm lý học đường\n- Tổng đài quốc gia bảo vệ trẻ em: 111 (miễn phí)\n- Nếu đang gặp nguy hiểm hoặc đã bị lừa tiền: báo công an (113)"
+      },
+      "END_4.2": {
+        "title": "Cùng nhìn lại lựa chọn",
+        "text": "",
+        "analysis": "Kết quả: An toàn. Bạn bắt máy và cho biết mình không nhắn gì, Facebook có thể đã bị hack. Cậu bạn không bị lừa.\nCảm xúc lúc đó: Bạn hơi hoảng và bực vì bị mạo danh; cậu bạn nhẹ người.\nĐiều đang diễn ra: Gọi thẳng vào số quen thuộc là một kênh kiểm tra mà người lừa đảo không kiểm soát được.\nLàm tiếp: Bạn kể với bố mẹ, cùng đổi mật khẩu, đăng xuất mọi thiết bị, báo cáo tài khoản với nền tảng và nhắn bạn bè cẩn thận với tin nhắn lạ.",
+        "video": {
+          "src": "/videos/lua-dao/end-4-2.mp4",
+          "poster": "/videos/lua-dao/end-4-2.webp"
+        },
+        "choices": [],
+        "kind": "ending",
+        "next": null,
+        "help": "KHI CẦN GIÚP ĐỠ. Bạn không phải tự xử lý một mình. Bạn hãy tìm đến:\n- Bố mẹ hoặc người lớn trong gia đình mà bạn tin tưởng\n- Thầy cô chủ nhiệm\n- Chuyên viên tâm lý học đường\n- Tổng đài quốc gia bảo vệ trẻ em: 111 (miễn phí)\n- Nếu đang gặp nguy hiểm hoặc đã bị lừa tiền: báo công an (113)"
+      },
+      "Scene 6": {
+        "title": "Khi người lạ gây áp lực",
+        "text": "(Góc nhìn thứ 1 - Bạn). Ông ấy tỏ vẻ bực tức, cố tình bước tới chĩa thẳng điện thoại vào mặt bạn: \n\n\nLúc này, bạn cảm thấy có gì đó rất sai.",
+        "video": {
+          "src": "/videos/lua-dao/scene-6.mp4",
+          "poster": "/videos/lua-dao/scene-6.webp"
+        },
+        "choices": [
+          {
+            "id": "6.1",
+            "text": "Bạn sợ bị người lớn mắng giữa chỗ đông người nên quay mặt lại, nhìn thẳng vào máy, xin lỗi và đọc to.",
+            "points": 0,
+            "feedback": "Người đàn ông đã quay được cận cảnh khuôn mặt và giọng nói của bạn. \nGhi nhận: Sợ bị người lớn mắng giữa chỗ đông người là cảm xúc rất bình thường. Điều giúp bạn an toàn hơn là hành động: bạn có quyền lùi lại và từ chối, kể cả khi người lớn đang quát.",
+            "next": "Scene 2A"
+          },
+          {
+            "id": "6.2",
+            "text": "Bạn rất tức vì mình giúp mà bị mắng, đứng lại nói lớn: “Cháu giúp ông mà ông mắng cháu à? Sao ông lại làm thế?”",
+            "points": 0,
+            "feedback": "Cùng xem diễn biến tiếp theo và nhìn lại lựa chọn của mình nhé.",
+            "next": "END_6.2"
+          },
+          {
+            "id": "6.3",
+            "text": "Bạn cúi mặt xuống, lấy khẩu trang trong túi ra đeo, quay lưng đi về phía có đông người và gần quầy bảo vệ.",
+            "points": 1,
+            "feedback": "Cùng xem diễn biến tiếp theo và nhìn lại lựa chọn của mình nhé.",
+            "next": "END_6.3"
+          },
+          {
+            "id": "6.4",
+            "text": "Bạn lùi lại, nhìn quanh và gọi to nhờ nhân viên bảo vệ gần đó: “Chú ơi, ông này đang quay mặt cháu, chú giúp cháu với!”",
+            "points": 2,
+            "feedback": "Cùng xem diễn biến tiếp theo và nhìn lại lựa chọn của mình nhé.",
+            "next": "END_6.4"
+          }
+        ],
+        "kind": "question"
+      },
+      "END_6.2": {
+        "title": "Cùng nhìn lại lựa chọn",
+        "text": "",
+        "analysis": "Kết quả: Chưa an toàn. Bạn ở lại đối mặt, camera ghi được nhiều góc mặt và nhiều sắc thái giọng nói của bạn.\nCảm xúc lúc đó: Tức giận khi mình tốt bụng mà bị mắng là cảm xúc hoàn toàn bình thường.\nĐiều đang diễn ra: Người đàn ông kéo dài cuộc tranh cãi; càng nhiều thời gian trước ống kính, càng thu được nhiều dữ liệu.\nLần sau có thể: Giữ nguyên cảm xúc nhưng đổi hành động: lùi ra xa, đi về phía đông người hoặc quầy bảo vệ, nhờ người lớn giúp.",
+        "video": {
+          "src": "/videos/lua-dao/end-6-2.mp4",
+          "poster": "/videos/lua-dao/end-6-2.webp"
+        },
+        "choices": [],
+        "kind": "ending",
+        "next": null,
+        "help": "KHI CẦN GIÚP ĐỠ. Bạn không phải tự xử lý một mình. Bạn hãy tìm đến:\n- Bố mẹ hoặc người lớn trong gia đình mà bạn tin tưởng\n- Thầy cô chủ nhiệm\n- Chuyên viên tâm lý học đường\n- Tổng đài quốc gia bảo vệ trẻ em: 111 (miễn phí)\n- Nếu đang gặp nguy hiểm hoặc đã bị lừa tiền: báo công an (113)"
+      },
+      "END_6.3": {
+        "title": "Cùng nhìn lại lựa chọn",
+        "text": "",
+        "analysis": "Kết quả: An toàn hơn. Người đàn ông lẩm bẩm vài câu rồi bỏ đi. Vì bạn đeo khẩu trang và không nói thêm, dữ liệu ông ta thu được ít hơn nhiều.\nCảm xúc lúc đó: Bạn sợ và run, đó là phản ứng tự nhiên của cơ thể khi bị đe dọa.\nĐiều đang diễn ra: Giảm thời gian trước ống kính và che bớt khuôn mặt làm giảm lượng dữ liệu bị thu thập, nhưng không đảm bảo hoàn toàn.\nLần sau có thể: Sau khi rời đi, kể ngay cho bố mẹ hoặc nhân viên bảo vệ để mọi người cùng để ý.",
+        "video": {
+          "src": "/videos/lua-dao/end-6-3.mp4",
+          "poster": "/videos/lua-dao/end-6-3.webp"
+        },
+        "choices": [],
+        "kind": "ending",
+        "next": null,
+        "help": "KHI CẦN GIÚP ĐỠ. Bạn không phải tự xử lý một mình. Bạn hãy tìm đến:\n- Bố mẹ hoặc người lớn trong gia đình mà bạn tin tưởng\n- Thầy cô chủ nhiệm\n- Chuyên viên tâm lý học đường\n- Tổng đài quốc gia bảo vệ trẻ em: 111 (miễn phí)\n- Nếu đang gặp nguy hiểm hoặc đã bị lừa tiền: báo công an (113)"
+      },
+      "END_6.4": {
+        "title": "Cùng nhìn lại lựa chọn",
+        "text": "",
+        "analysis": "Kết quả: Cách làm tốt nhất. Bảo vệ tới ngay, yêu cầu người đàn ông dừng quay; bạn mượn điện thoại chú bảo về, gọi cho mẹ và mẹ đến đón.\nCảm xúc lúc đó: Bạn vẫn sợ và tim đập nhanh, nhưng vẫn nhờ người lớn giúp.\nĐiều đang diễn ra: Nhờ giúp đỡ là một cách tự bảo vệ, không phải yếu đuối.",
+        "video": {
+          "src": "/videos/lua-dao/end-6-4.mp4",
+          "poster": "/videos/lua-dao/end-6-4.webp"
+        },
+        "choices": [],
+        "kind": "ending",
+        "next": null,
+        "help": "KHI CẦN GIÚP ĐỠ. Bạn không phải tự xử lý một mình. Bạn hãy tìm đến:\n- Bố mẹ hoặc người lớn trong gia đình mà bạn tin tưởng\n- Thầy cô chủ nhiệm\n- Chuyên viên tâm lý học đường\n- Tổng đài quốc gia bảo vệ trẻ em: 111 (miễn phí)\n- Nếu đang gặp nguy hiểm hoặc đã bị lừa tiền: báo công an (113)"
+      },
+      "Scene 7": {
+        "title": "Giúp đỡ theo cách an toàn",
+        "text": "(Góc nhìn thứ 1 - Góc nhìn của em học sinh lớp 8 - 9). Bạn đã đến quầy bảo vệ, kể lại chuyện vừa xảy ra và nhắn cho mẹ. Nhân viên bảo vệ cảm ơn bạn, ghi nhận thông tin và cùng bạn xem lại camera để kiểm tra người đàn ông đó. Một lúc sau mẹ nhắn lại: “Con làm tốt lắm. Mẹ đang đến đón con.”",
+        "video": {
+          "src": "/videos/lua-dao/scene-7.mp4",
+          "poster": "/videos/lua-dao/scene-7.webp"
+        },
+        "choices": [],
+        "kind": "ending",
+        "analysis": "Điều đang diễn ra: Người lạ nhờ thao tác điện thoại có thể đang thu khuôn mặt, vân tay và giọng nói của bạn. Khi bạn dừng lại, báo người có trách nhiệm và kể với bố mẹ, bạn giúp cả mình và những người khác được bảo vệ.\nViệc có thể làm:\n(1) Khi người lạ nhờ thao tác điện thoại: lùi lại, mời họ tới quầy nhân viên hoặc bảo vệ. \n(2) Nếu đã lỡ làm theo: kể ngay với bố mẹ hoặc thầy cô. \n(3) Cả nhà thống nhất một “mật khẩu gia đình”; có cuộc gọi báo con gặp nạn thì hỏi mật khẩu và gọi lại số của con.",
+        "next": null,
+        "help": "KHI CẦN GIÚP ĐỠ. Bạn không phải tự xử lý một mình. Bạn hãy tìm đến:\n- Bố mẹ hoặc người lớn trong gia đình mà bạn tin tưởng\n- Thầy cô chủ nhiệm\n- Chuyên viên tâm lý học đường\n- Tổng đài quốc gia bảo vệ trẻ em: 111 (miễn phí)\n- Nếu đang gặp nguy hiểm hoặc đã bị lừa tiền: báo công an (113)"
+      },
+      "After 1.1": {
+        "title": "Sau lời nhờ giúp",
+        "text": "Cùng theo dõi chuyện gì xảy ra sau đó.",
+        "video": {
+          "src": "/videos/lua-dao/sau-option-1-1.mp4",
+          "poster": "/videos/lua-dao/sau-option-1-1.webp"
+        },
+        "choices": [],
+        "kind": "narrative",
+        "next": "Scene 2A"
+      }
+    }
+  },
+  {
+    "id": "bao-luc-hoc-duong",
+    "title": "Bạo lực học đường",
+    "category": "self",
+    "topic": "Ứng xử với bạo lực mạng",
+    "theme": "lavender",
+    "icon": "shield",
+    "description": "Giữa áp lực của nhóm bạn, em sẽ làm gì để bảo vệ mình và ngăn một câu chuyện đi quá xa?",
+    "duration": "5–10 phút",
+    "status": "published",
+    "version": 20261101,
+    "startNode": "C_01",
+    "cover": "/videos/bao-luc-hoc-duong/c-01.webp",
+    "mediaNote": "Một số cảnh đang chờ video; em vẫn có thể đọc tình huống và hoàn thành bài.",
+    "nodes": {
+      "C_01": {
+        "title": "Bài tập nhóm bị bỏ lỡ",
+        "text": "(POV) Bạn nhìn chằm chằm vào màn hình điện thoại. Tiếng tim đập dồn dập hòa cùng tiếng lướt ngón tay vội vã. Cổng thông tin học sinh hiện lên con số 0 tròn trĩnh đỏ chót ở cột điểm \"Bài tập nhóm\". Chuyển cảnh nhanh sang màn hình laptop, thư mục Google Drive trống trơn. Đột nhiên, tiếng \"ting\" xé toạc sự tĩnh lặng. Tin nhắn từ Z hiện lên màn hình khóa. [Góc máy quay cận cảnh các ngón tay] Bạn gõ phím cành cạch định hỏi tội, rồi lại xóa đi, lặp lại ba lần trong sự ức chế tột độ.",
+        "video": {
+          "src": "/videos/bao-luc-hoc-duong/c-01.mp4",
+          "poster": "/videos/bao-luc-hoc-duong/c-01.webp"
+        },
+        "choices": [
+          {
+            "id": "A",
+            "text": "\"Cậu bận gì mà không nhờ ai up hộ vậy? Cô chốt điểm 0 cho nhóm rồi, giờ cậu tính sao?\"",
+            "points": 0,
+            "feedback": "Lựa chọn đã được ghi nhận. Cùng theo dõi diễn biến tiếp theo nhé.",
+            "next": "C_02"
+          },
+          {
+            "id": "B",
+            "text": "Gửi icon 👍 (Xem nhưng không buồn nói thêm).",
+            "points": 0,
+            "feedback": "Lựa chọn đã được ghi nhận. Cùng theo dõi diễn biến tiếp theo nhé.",
+            "next": "C_02"
+          }
+        ],
+        "kind": "question"
+      },
+      "C_02": {
+        "title": "Một câu chuyện trên mạng",
+        "text": "Màn hình điện thoại rung bần bật với hai cuộc gọi nhỡ liên tiếp từ trưởng nhóm X. Bạn chưa kịp bắt máy, X đã gửi ngay một đoạn video quay màn hình. Góc máy phóng to vào đoạn video đó: là story tài khoản Instagram riêng tư của Z, quay cảnh ly cafe tại một quán quen thuộc, kèm dòng trạng thái đầy mỉa mai: \"Làm việc với mấy người tham vọng mệt mỏi thật sự\". Nhạc nền bắt đầu dồn dập, màn hình cuộn nhanh qua hàng loạt tin nhắn bức xúc của X gửi đến, đẩy cơn tức giận lên tận cổ.",
+        "video": {
+          "src": "/videos/bao-luc-hoc-duong/c-02.mp4",
+          "poster": "/videos/bao-luc-hoc-duong/c-02.webp"
+        },
+        "choices": [
+          {
+            "id": "A",
+            "text": "\"Gì vậy? Giờ cả nhóm 0 điểm vì nó rồi mà còn nói vậy được sao?\"",
+            "points": 0,
+            "feedback": "Lựa chọn đã được ghi nhận. Cùng theo dõi diễn biến tiếp theo nhé.",
+            "next": "C_03"
+          },
+          {
+            "id": "B",
+            "text": "\"Chắc nó nói vụ khác. Kệ đi, giờ cãi nhau cũng có đổi được điểm đâu.\"",
+            "points": 0,
+            "feedback": "Lựa chọn đã được ghi nhận. Cùng theo dõi diễn biến tiếp theo nhé.",
+            "next": "C_03"
+          }
+        ],
+        "kind": "question"
+      },
+      "C_03": {
+        "title": "Áp lực từ nhóm bạn",
+        "text": "Tiếng pop-up thông báo réo liên tục. Màn hình tự động chuyển sang giao diện một nhóm chat mới toanh mang tên \"Nạn nhân của Z\". X gửi vào một file văn bản dài ngoằng. Góc máy quay lướt chậm qua những từ ngữ sắc lẹm trong bản nháp bài bóc phốt, phơi bày mọi tật xấu của Z lên mặt chữ. Cuối cùng, khung chat dừng lại ở tin nhắn X tag thẳng tên bạn. Thời gian trong video như ngưng đọng lại chờ đợi một cái gật đầu, màn hình tối dần chờ bạn đưa ra quyết định.",
+        "video": {
+          "src": "/videos/bao-luc-hoc-duong/c-03.mp4",
+          "poster": "/videos/bao-luc-hoc-duong/c-03.webp"
+        },
+        "choices": [
+          {
+            "id": "A",
+            "text": "\"Tớ cũng nghĩ là nên gửi, coi như một bài học để Z thay đổi, mình không hề nói sai điều gì. Nhưng để an toàn thì nhớ tick vào ô ẩn danh nhé.\"",
+            "points": 0,
+            "feedback": "Lựa chọn đã được ghi nhận. Cùng theo dõi diễn biến tiếp theo nhé.",
+            "next": "C_04a"
+          },
+          {
+            "id": "B",
+            "text": "\"Thôi bỏ đi, đăng lên lùm xùm cô giáo biết lại gọi cả lũ lên văn phòng viết kiểm điểm. Tớ sợ lắm.\"",
+            "points": 2,
+            "feedback": "Lựa chọn đã được ghi nhận. Cùng theo dõi diễn biến tiếp theo nhé.",
+            "next": "C_04b"
+          }
+        ],
+        "kind": "question"
+      },
+      "C_04a": {
+        "title": "Có nên chia sẻ tin nhắn riêng?",
+        "text": "Khung cảnh quay lại màn hình điện thoại. Trong nhóm chat, biểu tượng thả tim, thả lửa bay ngập màn hình. Tiếng tin nhắn mật vang lên, X nhắn riêng với giọng điệu hối thúc. Màn hình video chia đôi: một bên là tin nhắn đòi bằng chứng của X, một bên là khung chat riêng với Z vẫn đang mở. Mọi thứ chỉ cách nhau một cú bấm chụp ảnh màn hình.",
+        "video": {
+          "src": "/videos/bao-luc-hoc-duong/c-04a.mp4",
+          "poster": "/videos/bao-luc-hoc-duong/c-04a.webp"
+        },
+        "choices": [
+          {
+            "id": "A",
+            "text": "Chụp màn hình tin nhắn của Z gửi cho X để cung cấp bằng chứng.",
+            "points": 0,
+            "feedback": "Lựa chọn đã được ghi nhận. Cùng theo dõi diễn biến tiếp theo nhé.",
+            "next": "END_BAD_1"
+          },
+          {
+            "id": "B",
+            "text": "\"Thôi tớ không share tin nhắn riêng tư đâu, thế quá đáng quá.\"",
+            "points": 2,
+            "feedback": "Lựa chọn đã được ghi nhận. Cùng theo dõi diễn biến tiếp theo nhé.",
+            "next": "C_05"
+          }
+        ],
+        "kind": "question"
+      },
+      "C_04b": {
+        "title": "Khi số đông gây sức ép",
+        "text": "Sự tĩnh lặng đáng sợ bao trùm. Nhóm chat bỗng nhiên ngừng bặt mọi hoạt động sau dòng tin nhắn từ chối của bạn. Vài giây sau, một bảng bình chọn (Poll) lạnh lùng hiện ra giữa màn hình. Tiếng \"ding, ding, ding\" vang lên vô hồn, báo hiệu 3 thành viên kia đều đã vote \"CÓ\". Tên của bạn bị tag đỏ rực. Áp lực vô hình từ những con số chèn ép nghẹt thở qua màn hình.",
+        "video": null,
+        "choices": [
+          {
+            "id": "A",
+            "text": "\"Tớ không vote. Các cậu làm gì thì làm, đừng lôi tớ vào.\"",
+            "points": 0,
+            "feedback": "Lựa chọn đã được ghi nhận. Cùng theo dõi diễn biến tiếp theo nhé.",
+            "next": "END_BAD_2"
+          },
+          {
+            "id": "B",
+            "text": "Bấm vote KHÔNG. \"Tớ không đồng ý đăng.\"",
+            "points": 2,
+            "feedback": "Lựa chọn đã được ghi nhận. Cùng theo dõi diễn biến tiếp theo nhé.",
+            "next": "C_05"
+          }
+        ],
+        "kind": "question"
+      },
+      "C_05": {
+        "title": "Giữ vững lựa chọn của em",
+        "text": "Âm thanh chuông gọi điện thoại vang lên chát chúa, phá vỡ mọi sự im lặng. Giao diện cuộc gọi âm thanh từ X hiện lù lù trên toàn màn hình với biểu tượng màu đỏ rung bần bật. Khi vừa nhấn nghe, giọng X vang lên sắc lạnh qua loa ngoài, không còn chút vẻ thân thiện thường ngày. Khung hình nhấp nháy, tiếng thở dốc của X bên kia đầu dây tạo nên một sức ép tâm lý khủng khiếp.",
+        "video": null,
+        "choices": [
+          {
+            "id": "A",
+            "text": "\"Tớ nghĩ lại rồi, lời cậu nói khá hợp lý. Tụi mình đang lên tiếng cho công lý mà. Các cậu đăng đi, tớ không cản nữa.\"",
+            "points": 0,
+            "feedback": "Lựa chọn đã được ghi nhận. Cùng theo dõi diễn biến tiếp theo nhé.",
+            "next": "END_BAD_3"
+          },
+          {
+            "id": "B",
+            "text": "\"Được thôi, tớ thà sau này làm một mình còn hơn. Chào các cậu.\" (Cúp máy, tự rời nhóm).",
+            "points": 1,
+            "feedback": "Lựa chọn đã được ghi nhận. Cùng theo dõi diễn biến tiếp theo nhé.",
+            "next": "END_BAD_4"
+          },
+          {
+            "id": "C",
+            "text": "\"Không X ạ. Tớ sẽ báo cáo việc Z không làm bài tập nhóm và cả việc các cậu định làm cho cô giáo. Tớ không muốn xuất hiện bài bóc phốt nào trên mạng cả.\"",
+            "points": 2,
+            "feedback": "Lựa chọn đã được ghi nhận. Cùng theo dõi diễn biến tiếp theo nhé.",
+            "next": "END_GOOD"
+          }
+        ],
+        "kind": "question"
+      },
+      "END_BAD_1": {
+        "title": "Cùng nhìn lại lựa chọn",
+        "text": "Video tua nhanh qua hàng trăm bình luận chửi rủa, ảnh chế Z tràn ngập trang Confession trường. Tiếng thông báo dồn dập đến nhức óc rồi bất ngờ im bặt. Màn hình sập tối, ảm đạm.",
+        "video": null,
+        "choices": [],
+        "kind": "ending",
+        "analysis": "[BÀI HỌC VỀ SỰ TỨC GIẬN] Z thực sự đã sai khi bỏ bê công sức của cả nhóm, và sự tức giận của bạn là hoàn toàn chính đáng. Tuy nhiên, dùng sức mạnh đám đông để sỉ nhục một cá nhân trên mạng không đem lại công lý, mà chỉ tạo ra một tổn thương mới tàn độc hơn. Đừng để cái sai của người khác biến mình thành kẻ bắt nạt. Lần sau, hãy thử nhờ thầy cô phân xử để giải quyết tận gốc vấn đề nhé.",
+        "next": null,
+        "help": "Nếu chuyện này khiến em lo lắng, hãy nói với bố mẹ hoặc thầy cô em tin tưởng. Em không phải tự xử lý một mình."
+      },
+      "END_BAD_2": {
+        "title": "Cùng nhìn lại lựa chọn",
+        "text": "Video quay cảnh bài phốt vẫn được đăng tải thành công. Màn hình nhuốm một màu xám xịt ảm đạm. Tiếng cười nói của nhóm bạn văng vẳng xa dần.",
+        "video": null,
+        "choices": [],
+        "kind": "ending",
+        "analysis": "[BÀI HỌC VỀ SỰ IM LẶNG] Làm ngơ trước bạo lực vì sợ rắc rối là một phản xạ tự vệ rất tự nhiên. Nhưng sự im lặng ấy vô tình lại là tấm khiên vững chắc nhất dung túng cho kẻ bắt nạt. Hôm nay nạn nhân là Z, nhưng ngày mai có thể là bất kỳ ai. Nếu bạn chưa sẵn sàng để đối mặt trực tiếp, không sao cả, nhưng hãy âm thầm báo cho người lớn biết nhé.",
+        "next": null,
+        "help": "Nếu chuyện này khiến em lo lắng, hãy nói với bố mẹ hoặc thầy cô em tin tưởng. Em không phải tự xử lý một mình."
+      },
+      "END_BAD_3": {
+        "title": "Cùng nhìn lại lựa chọn",
+        "text": "Hình ảnh tin nhắn thỏa hiệp của bạn bị X chụp lại và tung thẳng vào nhóm chat như một chiến lợi phẩm.",
+        "video": null,
+        "choices": [],
+        "kind": "ending",
+        "analysis": "[BÀI HỌC VỀ ÁP LỰC ĐÁM ĐÔNG] Nỗi sợ bị tẩy chay và khao khát được thuộc về một nhóm đã khiến bạn nhắm mắt hùa theo cái sai. Nhưng nhượng bộ áp lực không bao giờ mua được sự an toàn thực sự, nó chỉ khiến bạn đánh mất tiếng nói của chính mình. Đừng sợ hãi khi phải bước ra khỏi một mối quan hệ độc hại, vì sẽ luôn có những người bạn tuyệt vời hơn đang chờ bạn ở phía trước.",
+        "next": null,
+        "help": "Nếu chuyện này khiến em lo lắng, hãy nói với bố mẹ hoặc thầy cô em tin tưởng. Em không phải tự xử lý một mình."
+      },
+      "END_BAD_4": {
+        "title": "Cùng nhìn lại lựa chọn",
+        "text": "Màn hình tối đen, Y ngồi thu mình lại một góc. Phía xa xa văng vẳng tiếng chuông điện thoại báo tin nhắn liên tục (ám chỉ bài bóc phốt về Z vẫn đang lan truyền trên confession). Cảm giác đầy day dứt.",
+        "video": null,
+        "choices": [],
+        "kind": "ending",
+        "analysis": "Bạn đã rất bản lĩnh khi dám từ chối hùa theo cái sai để bảo vệ sự trong sạch của bản thân. Tuy nhiên, việc chọn cách cúp máy và bỏ đi chỉ giúp bạn tạm thời thoát khỏi rắc rối, chứ không ngăn chặn được việc Z trở thành nạn nhân của bạo lực mạng. Việc bạn tách mình ra khỏi một tập thể đang có vấn đề chưa phải là cách giải quyết triệt để nhất. Lần sau, đừng một mình gánh chịu áp lực, hãy dũng cảm nhờ sự can thiệp của thầy cô để dừng cuộc bạo lực này lại nhé.",
+        "next": null,
+        "help": "Nếu chuyện này khiến em lo lắng, hãy nói với bố mẹ hoặc thầy cô em tin tưởng. Em không phải tự xử lý một mình."
+      },
+      "END_GOOD": {
+        "title": "Cùng nhìn lại lựa chọn",
+        "text": "Giao diện chat mờ đi, một màn hình rực sáng ấm áp hiện lên. Tiếng bíp báo tin nhắn vang lên nhẹ nhàng. Dòng tin nhắn từ cô giáo chủ nhiệm hiện rõ trên màn hình: \"Cảm ơn em đã tin tưởng và báo cho cô sự việc. Cô đã gọi X lên chấn chỉnh và yêu cầu dừng đăng tải bài viết. Em đã làm rất đúng, cô tự hào về em. Ngày mai đến lớp, cô sẽ xếp em vào làm việc cùng nhóm của lớp trưởng nhé.\" Cảm giác nghẹn ngào, trút bỏ được gánh nặng và tràn ngập sự tự hào. Một luồng sáng xanh hiện lên, huy hiệu \"Khiên Chắn Nhí\" rực sáng đầy kiêu hãnh.",
+        "video": null,
+        "choices": [],
+        "kind": "ending",
+        "analysis": "[BẢO VỆ XUẤT SẮC: BẢN LĨNH TỪ CHỐI] Cảm giác đi ngược lại đám đông luôn rất đáng sợ. Nhưng bạn đã vô cùng dũng cảm khi thiết lập ranh giới an toàn cho mình và nhờ người lớn can thiệp. Bạn không hề mất đi tình bạn, bạn chỉ đang lọc đi những mối quan hệ độc hại mà thôi. Sự trưởng thành thực sự bắt đầu từ khoảnh khắc bạn dám nói \"Không\" với cái xấu!",
+        "next": null,
+        "help": "Nếu chuyện này khiến em lo lắng, hãy nói với bố mẹ hoặc thầy cô em tin tưởng. Em không phải tự xử lý một mình."
+      }
+    }
+  }
+]

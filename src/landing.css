@@ -1,0 +1,7 @@
+/* Keep the first action visible as soon as the welcome page opens. */
+@media (min-width: 901px) {
+  .landing-hero {
+    margin-top: 0;
+    padding-top: 0;
+  }
+}
