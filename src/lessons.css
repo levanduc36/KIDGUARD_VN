@@ -7,6 +7,7 @@
 .story-scene video { width: 100%; aspect-ratio: 16 / 9; object-fit: contain; background: #102c2b; }
 .scenario-text p, .ending-analysis, .ending-help p { white-space: pre-line; overflow-wrap: anywhere; }
 .ending-analysis { font-size: 14px; line-height: 1.95; margin: 16px 0 22px; }
+.analysis-outcome { font-weight: 800; }
 .ending-help { display: flex; align-items: flex-start; gap: 12px; padding: 18px; border-radius: 12px; background: #edf5ee; margin: 20px 0; }
 .ending-help svg { flex-shrink: 0; margin-top: 4px; }
 .ending-help p { margin: 0; font-size: 12px; line-height: 1.9; }

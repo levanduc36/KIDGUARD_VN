@@ -22,7 +22,20 @@ npm start
 
 Mở **http://localhost:3001**. Không đặt `NODE_ENV=production` khi dùng HTTP trên máy; chế độ production yêu cầu HTTPS và cookie Secure.
 
+### Cấp mã giáo viên
+
+Đặt `ADMIN_SETUP_SECRET` dài, ngẫu nhiên trong `.env` (không đưa file này lên Git). Sau khi đã chạy ứng dụng ít nhất một lần để tạo database, tạo một mã dùng một lần bằng PowerShell:
+
+```powershell
+npm run teacher-code -- create "Tên giáo viên" "giá-trị-ADMIN_SETUP_SECRET" 90
+```
+
+Lệnh in ra mã `TEACH-...`, có hiệu lực 90 ngày trong ví dụ. Gửi mã qua một kênh riêng tư; mã chỉ được lưu dạng băm và tự trở thành không dùng được sau khi một giáo viên đăng ký thành công.
+
 ## Đã có
+
+- Đăng ký chọn vai trò **học sinh** hoặc **giáo viên**, yêu cầu họ tên và tự tạo ID công khai `S`/`T` kèm 9 chữ số. Giáo viên cần mã xác minh dùng một lần do người vận hành cấp.
+- Mục **Lớp học**: giáo viên tạo/xóa nhiều lớp, có mã lớp cố định, mời học sinh theo ID, duyệt yêu cầu tham gia, xem tiến độ tốt nhất của từng bài và lưu ghi chú riêng theo lớp. Học sinh gửi yêu cầu bằng mã lớp, phản hồi lời mời, rời lớp và chỉ thấy họ tên bạn cùng lớp.
 
 - Trang chào, đăng ký, đăng nhập, đăng xuất; hỗ trợ điện thoại và bàn phím.
 - Tài khoản thật, mật khẩu băm và phiên đăng nhập có hạn 7 ngày; dữ liệu tồn tại sau khi khởi động lại.
@@ -60,7 +73,7 @@ docs/DEPLOYMENT.md      Hướng dẫn đưa lên máy chủ có HTTPS
 
 ## Dữ liệu và bảo mật
 
-Chỉ yêu cầu tên đăng nhập, biệt danh và mật khẩu; không yêu cầu tên thật, ngày sinh, email, địa chỉ hay số điện thoại. Không có tracker hoặc tải tài nguyên từ máy chủ bên thứ ba khi người học sử dụng website.
+Yêu cầu họ tên, tên đăng nhập, biệt danh và mật khẩu; không yêu cầu ngày sinh, email, địa chỉ hay số điện thoại. Họ tên chỉ hiển thị cho giáo viên của lớp và các học sinh đã cùng tham gia lớp. Không có tracker hoặc tải tài nguyên từ máy chủ bên thứ ba khi người học sử dụng website.
 
 Mật khẩu dùng `scrypt` với salt ngẫu nhiên; session token ngẫu nhiên chỉ lưu bản băm trong SQLite. Cookie có `HttpOnly`, `SameSite=Strict`, và `Secure` ở production. Các API thay đổi dữ liệu kiểm tra Origin, header riêng và JSON; không bật CORS. API có giới hạn tốc độ, đăng nhập sai có giới hạn theo IP và tên tài khoản. Truy vấn SQL dùng tham số; lịch sử và bài làm luôn kiểm tra chủ tài khoản. Các header CSP, chống nhúng iframe và chống đoán MIME được cấu hình bằng Helmet. Cách cấu hình tham khảo [Express Security](https://expressjs.com/en/advanced/best-practice-security/) và [Node Crypto](https://nodejs.org/docs/latest-v24.x/api/crypto.html).
 

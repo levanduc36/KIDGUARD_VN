@@ -4,10 +4,16 @@ import { api, type Attempt, type Result } from './api';
 
 const formatDate = (time: number) => new Intl.DateTimeFormat('vi-VN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Ho_Chi_Minh' }).format(time);
 
+function Analysis({ text }: { text: string }) {
+  const outcome = text.match(/^(Kết quả:\s*[^.\n]+\.)/);
+  if (!outcome) return <>{text}</>;
+  return <><strong className="analysis-outcome">{outcome[1]}</strong>{text.slice(outcome[1].length)}</>;
+}
+
 function Takeaway({ result, main = false }: { result: Result; main?: boolean }) {
   return <section className="takeaway">
     {main ? <h1>Điều em có thể mang theo</h1> : <h3>Điều em có thể mang theo</h3>}
-    {result.analysis ? <p className="ending-analysis">{result.analysis}</p> : <p>Phần nhìn lại của phiên bản bài học này chưa có trong lịch sử cũ.</p>}
+    {result.analysis ? <p className="ending-analysis"><Analysis text={result.analysis} /></p> : <p>Phần nhìn lại của phiên bản bài học này chưa có trong lịch sử cũ.</p>}
     {result.help && <div className="ending-help"><Heart size={20} /><p>{result.help}</p></div>}
   </section>;
 }

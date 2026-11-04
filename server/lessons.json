@@ -365,10 +365,10 @@
     "description": "Giữa áp lực của nhóm bạn, em sẽ làm gì để bảo vệ mình và ngăn một câu chuyện đi quá xa?",
     "duration": "5–10 phút",
     "status": "published",
-    "version": 20261101,
+    "version": 20261104,
     "startNode": "C_01",
     "cover": "/videos/bao-luc-hoc-duong/c-01.webp",
-    "mediaNote": "Một số cảnh đang chờ video; em vẫn có thể đọc tình huống và hoàn thành bài.",
+    "mediaNote": "Đã có video cho toàn bộ các nhánh của câu chuyện.",
     "nodes": {
       "C_01": {
         "title": "Bài tập nhóm bị bỏ lỡ",
@@ -473,7 +473,10 @@
       "C_04b": {
         "title": "Khi số đông gây sức ép",
         "text": "Sự tĩnh lặng đáng sợ bao trùm. Nhóm chat bỗng nhiên ngừng bặt mọi hoạt động sau dòng tin nhắn từ chối của bạn. Vài giây sau, một bảng bình chọn (Poll) lạnh lùng hiện ra giữa màn hình. Tiếng \"ding, ding, ding\" vang lên vô hồn, báo hiệu 3 thành viên kia đều đã vote \"CÓ\". Tên của bạn bị tag đỏ rực. Áp lực vô hình từ những con số chèn ép nghẹt thở qua màn hình.",
-        "video": null,
+        "video": {
+          "src": "/videos/bao-luc-hoc-duong/c-04b.mp4",
+          "poster": "/videos/bao-luc-hoc-duong/c-04b.webp"
+        },
         "choices": [
           {
             "id": "A",
@@ -495,7 +498,10 @@
       "C_05": {
         "title": "Giữ vững lựa chọn của em",
         "text": "Âm thanh chuông gọi điện thoại vang lên chát chúa, phá vỡ mọi sự im lặng. Giao diện cuộc gọi âm thanh từ X hiện lù lù trên toàn màn hình với biểu tượng màu đỏ rung bần bật. Khi vừa nhấn nghe, giọng X vang lên sắc lạnh qua loa ngoài, không còn chút vẻ thân thiện thường ngày. Khung hình nhấp nháy, tiếng thở dốc của X bên kia đầu dây tạo nên một sức ép tâm lý khủng khiếp.",
-        "video": null,
+        "video": {
+          "src": "/videos/bao-luc-hoc-duong/c-05.mp4",
+          "poster": "/videos/bao-luc-hoc-duong/c-05.webp"
+        },
         "choices": [
           {
             "id": "A",
@@ -524,7 +530,10 @@
       "END_BAD_1": {
         "title": "Cùng nhìn lại lựa chọn",
         "text": "Video tua nhanh qua hàng trăm bình luận chửi rủa, ảnh chế Z tràn ngập trang Confession trường. Tiếng thông báo dồn dập đến nhức óc rồi bất ngờ im bặt. Màn hình sập tối, ảm đạm.",
-        "video": null,
+        "video": {
+          "src": "/videos/bao-luc-hoc-duong/end-bad-1.mp4",
+          "poster": "/videos/bao-luc-hoc-duong/end-bad-1.webp"
+        },
         "choices": [],
         "kind": "ending",
         "analysis": "[BÀI HỌC VỀ SỰ TỨC GIẬN] Z thực sự đã sai khi bỏ bê công sức của cả nhóm, và sự tức giận của bạn là hoàn toàn chính đáng. Tuy nhiên, dùng sức mạnh đám đông để sỉ nhục một cá nhân trên mạng không đem lại công lý, mà chỉ tạo ra một tổn thương mới tàn độc hơn. Đừng để cái sai của người khác biến mình thành kẻ bắt nạt. Lần sau, hãy thử nhờ thầy cô phân xử để giải quyết tận gốc vấn đề nhé.",
@@ -534,7 +543,10 @@
       "END_BAD_2": {
         "title": "Cùng nhìn lại lựa chọn",
         "text": "Video quay cảnh bài phốt vẫn được đăng tải thành công. Màn hình nhuốm một màu xám xịt ảm đạm. Tiếng cười nói của nhóm bạn văng vẳng xa dần.",
-        "video": null,
+        "video": {
+          "src": "/videos/bao-luc-hoc-duong/end-bad-2.mp4",
+          "poster": "/videos/bao-luc-hoc-duong/end-bad-2.webp"
+        },
         "choices": [],
         "kind": "ending",
         "analysis": "[BÀI HỌC VỀ SỰ IM LẶNG] Làm ngơ trước bạo lực vì sợ rắc rối là một phản xạ tự vệ rất tự nhiên. Nhưng sự im lặng ấy vô tình lại là tấm khiên vững chắc nhất dung túng cho kẻ bắt nạt. Hôm nay nạn nhân là Z, nhưng ngày mai có thể là bất kỳ ai. Nếu bạn chưa sẵn sàng để đối mặt trực tiếp, không sao cả, nhưng hãy âm thầm báo cho người lớn biết nhé.",
@@ -544,7 +556,10 @@
       "END_BAD_3": {
         "title": "Cùng nhìn lại lựa chọn",
         "text": "Hình ảnh tin nhắn thỏa hiệp của bạn bị X chụp lại và tung thẳng vào nhóm chat như một chiến lợi phẩm.",
-        "video": null,
+        "video": {
+          "src": "/videos/bao-luc-hoc-duong/end-bad-3.mp4",
+          "poster": "/videos/bao-luc-hoc-duong/end-bad-3.webp"
+        },
         "choices": [],
         "kind": "ending",
         "analysis": "[BÀI HỌC VỀ ÁP LỰC ĐÁM ĐÔNG] Nỗi sợ bị tẩy chay và khao khát được thuộc về một nhóm đã khiến bạn nhắm mắt hùa theo cái sai. Nhưng nhượng bộ áp lực không bao giờ mua được sự an toàn thực sự, nó chỉ khiến bạn đánh mất tiếng nói của chính mình. Đừng sợ hãi khi phải bước ra khỏi một mối quan hệ độc hại, vì sẽ luôn có những người bạn tuyệt vời hơn đang chờ bạn ở phía trước.",
@@ -554,7 +569,10 @@
       "END_BAD_4": {
         "title": "Cùng nhìn lại lựa chọn",
         "text": "Màn hình tối đen, Y ngồi thu mình lại một góc. Phía xa xa văng vẳng tiếng chuông điện thoại báo tin nhắn liên tục (ám chỉ bài bóc phốt về Z vẫn đang lan truyền trên confession). Cảm giác đầy day dứt.",
-        "video": null,
+        "video": {
+          "src": "/videos/bao-luc-hoc-duong/end-bad-4.mp4",
+          "poster": "/videos/bao-luc-hoc-duong/end-bad-4.webp"
+        },
         "choices": [],
         "kind": "ending",
         "analysis": "Bạn đã rất bản lĩnh khi dám từ chối hùa theo cái sai để bảo vệ sự trong sạch của bản thân. Tuy nhiên, việc chọn cách cúp máy và bỏ đi chỉ giúp bạn tạm thời thoát khỏi rắc rối, chứ không ngăn chặn được việc Z trở thành nạn nhân của bạo lực mạng. Việc bạn tách mình ra khỏi một tập thể đang có vấn đề chưa phải là cách giải quyết triệt để nhất. Lần sau, đừng một mình gánh chịu áp lực, hãy dũng cảm nhờ sự can thiệp của thầy cô để dừng cuộc bạo lực này lại nhé.",
@@ -564,7 +582,10 @@
       "END_GOOD": {
         "title": "Cùng nhìn lại lựa chọn",
         "text": "Giao diện chat mờ đi, một màn hình rực sáng ấm áp hiện lên. Tiếng bíp báo tin nhắn vang lên nhẹ nhàng. Dòng tin nhắn từ cô giáo chủ nhiệm hiện rõ trên màn hình: \"Cảm ơn em đã tin tưởng và báo cho cô sự việc. Cô đã gọi X lên chấn chỉnh và yêu cầu dừng đăng tải bài viết. Em đã làm rất đúng, cô tự hào về em. Ngày mai đến lớp, cô sẽ xếp em vào làm việc cùng nhóm của lớp trưởng nhé.\" Cảm giác nghẹn ngào, trút bỏ được gánh nặng và tràn ngập sự tự hào. Một luồng sáng xanh hiện lên, huy hiệu \"Khiên Chắn Nhí\" rực sáng đầy kiêu hãnh.",
-        "video": null,
+        "video": {
+          "src": "/videos/bao-luc-hoc-duong/end-good.mp4",
+          "poster": "/videos/bao-luc-hoc-duong/end-good.webp"
+        },
         "choices": [],
         "kind": "ending",
         "analysis": "[BẢO VỆ XUẤT SẮC: BẢN LĨNH TỪ CHỐI] Cảm giác đi ngược lại đám đông luôn rất đáng sợ. Nhưng bạn đã vô cùng dũng cảm khi thiết lập ranh giới an toàn cho mình và nhờ người lớn can thiệp. Bạn không hề mất đi tình bạn, bạn chỉ đang lọc đi những mối quan hệ độc hại mà thôi. Sự trưởng thành thực sự bắt đầu từ khoảnh khắc bạn dám nói \"Không\" với cái xấu!",

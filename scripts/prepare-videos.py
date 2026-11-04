@@ -17,7 +17,7 @@ import imageio_ffmpeg
 ffmpeg = os.environ.get('FFMPEG_BINARY') or imageio_ffmpeg.get_ffmpeg_exe()
 source = Path(sys.argv[1])
 def convert(file):
-    lesson = 'bao-luc-hoc-duong' if file.stem.startswith('C_') else 'lua-dao'
+    lesson = 'bao-luc-hoc-duong' if file.stem.startswith(('C_', 'END_BAD_', 'END_GOOD')) else 'lua-dao'
     name = re.sub(r'[^a-z0-9]+', '-', file.stem.lower()).strip('-')
     dest = ROOT/'public/videos'/lesson/(name+'.mp4')
     dest.parent.mkdir(parents=True, exist_ok=True)

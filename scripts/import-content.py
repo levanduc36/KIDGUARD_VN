@@ -81,8 +81,8 @@ fraud['nodes']['Scene 7']['text'] = fraud['nodes']['Scene 7']['text'].replace('N
 
 bullying = {'id': 'bao-luc-hoc-duong', 'title': 'Bạo lực học đường', 'category': 'self', 'topic': 'Ứng xử với bạo lực mạng',
             'theme': 'lavender', 'icon': 'shield', 'description': 'Giữa áp lực của nhóm bạn, em sẽ làm gì để bảo vệ mình và ngăn một câu chuyện đi quá xa?',
-            'duration': '5–10 phút', 'status': 'published', 'version': 20261101, 'startNode': 'C_01',
-            'cover': '/videos/bao-luc-hoc-duong/c-01.webp', 'mediaNote': 'Một số cảnh đang chờ video; em vẫn có thể đọc tình huống và hoàn thành bài.', 'nodes': {}}
+            'duration': '5–10 phút', 'status': 'published', 'version': 20261104, 'startNode': 'C_01',
+            'cover': '/videos/bao-luc-hoc-duong/c-01.webp', 'mediaNote': 'Đã có video cho toàn bộ các nhánh của câu chuyện.', 'nodes': {}}
 titles_b = {'C_01': 'Bài tập nhóm bị bỏ lỡ', 'C_02': 'Một câu chuyện trên mạng', 'C_03': 'Áp lực từ nhóm bạn',
             'C_04a': 'Có nên chia sẻ tin nhắn riêng?', 'C_04b': 'Khi số đông gây sức ép', 'C_05': 'Giữ vững lựa chọn của em'}
 points_b = {'C_01': [0, 0], 'C_02': [0, 0], 'C_03': [0, 2], 'C_04a': [0, 2], 'C_04b': [0, 2], 'C_05': [0, 1, 2]}
@@ -92,7 +92,7 @@ for row in sheets['Bạo lực học đường (Revised)'][1:]:
         ending = node_id.startswith('END_')
         # D is dialogue. The learner-facing description only uses the situation/context in C.
         node = {'title': titles_b.get(node_id, 'Cùng nhìn lại lựa chọn'), 'text': row.get('C', ''),
-                'video': video('bao-luc-hoc-duong', node_id) if node_id in ['C_01', 'C_02', 'C_03', 'C_04a'] else None, 'choices': []}
+                'video': video('bao-luc-hoc-duong', node_id) if node_id in ['C_01', 'C_02', 'C_03', 'C_04a', 'C_04b', 'C_05'] or ending else None, 'choices': []}
         bullying['nodes'][node_id] = node
         if ending:
             node.update(kind='ending', analysis=row.get('D', ''), next=None)

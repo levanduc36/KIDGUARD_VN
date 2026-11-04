@@ -4,6 +4,7 @@ import { once } from 'node:events';
 import { existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import { createApp } from '../server/app.mjs';
 import { lessons } from '../server/content.mjs';
 import { evaluationFor } from '../server/results.mjs';
@@ -24,7 +25,7 @@ async function fixture(t, options = {}) {
     const payload = await response.json();
     return { status: response.status, data: payload, headers: response.headers, cookie: response.headers.get('set-cookie')?.split(';')[0] };
   }
-  const register = (username = 'test_hero') => request('/auth/register', { username, nickname: 'Người hùng nhí', password: 'a-strong-passphrase-123' });
+  const register = (username = 'test_hero') => request('/auth/register', { username, nickname: 'Người hùng nhí', fullName: 'Người hùng nhí', password: 'a-strong-passphrase-123' });
   return { ...instance, request, register };
 }
 
@@ -52,7 +53,7 @@ test('accounts persist, passwords are hashed, sessions rotate and logout revokes
 
 test('validation, CSRF and expired sessions are enforced', async t => {
   const { request, register, db } = await fixture(t);
-  const body = { username: 'test_hero', nickname: 'Nhí', password: 'long-password-123' };
+  const body = { username: 'test_hero', nickname: 'Nhí', fullName: 'Bạn Nhí', password: 'long-password-123' };
   assert.equal((await request('/auth/register', body, null, { origin: 'https://evil.example' })).status, 403);
   assert.equal((await request('/auth/register', body, null, { 'x-kidguard-request': '' })).status, 403);
   assert.equal((await request('/auth/register', { ...body, password: '123' })).status, 400);
@@ -149,6 +150,35 @@ test('account login throttling is enforced', async t => {
   assert.equal((await request('/auth/login', { username: 'nobody', password: 'wrong' })).status, 429);
 });
 
+test('teacher codes, class membership and learner privacy are enforced', async t => {
+  const { request, db } = await fixture(t);
+  const teacherCode = 'TEACH-PRIVATE-ONE';
+  db.prepare('INSERT INTO teacher_access_codes(code_hash,label,created_at,expires_at) VALUES (?,?,?,?)').run(createHash('sha256').update(teacherCode.toUpperCase()).digest('hex'), 'Cô An', Date.now(), Date.now() + 86_400_000);
+  const teacher = await request('/auth/register', { username: 'co_an', nickname: 'Cô An', fullName: 'Nguyễn Thị An', password: 'long-password-123', role: 'teacher', teacherCode });
+  const student = await request('/auth/register', { username: 'ban_an', nickname: 'An nhỏ', fullName: 'Trần Minh An', password: 'long-password-123', role: 'student' });
+  const another = await request('/auth/register', { username: 'ban_binh', nickname: 'Bình nhỏ', fullName: 'Lê Gia Bình', password: 'long-password-123', role: 'student' });
+  assert.equal(teacher.status, 201); assert.match(teacher.data.user.publicId, /^T\d{9}$/);
+  assert.equal(student.status, 201); assert.match(student.data.user.publicId, /^S\d{9}$/);
+  assert.equal((await request('/auth/register', { username: 'co_lan', nickname: 'Cô Lan', fullName: 'Lê Lan', password: 'long-password-123', role: 'teacher', teacherCode })).status, 400);
+  const created = await request('/classes', { name: 'Lớp 5A' }, teacher.cookie);
+  assert.equal(created.status, 201);
+  assert.equal((await request('/classes', { name: 'Không được' }, student.cookie)).status, 403);
+  const classId = created.data.class.id;
+  assert.equal((await request('/classes/join', { code: created.data.class.joinCode }, student.cookie)).status, 201);
+  assert.equal((await request(`/classes/${classId}/members`, undefined, student.cookie)).status, 403);
+  const pending = await request(`/classes/${classId}/requests`, undefined, teacher.cookie);
+  assert.equal(pending.data.requests.length, 1);
+  assert.equal((await request(`/classes/${classId}/requests/${pending.data.requests[0].id}/respond`, { decision: 'accept' }, another.cookie)).status, 403);
+  assert.equal((await request(`/classes/${classId}/requests/${pending.data.requests[0].id}/respond`, { decision: 'accept' }, teacher.cookie)).status, 200);
+  const studentView = await request(`/classes/${classId}/members`, undefined, student.cookie);
+  assert.deepEqual(studentView.data.members, [{ fullName: 'Trần Minh An' }]);
+  const teacherView = await request(`/classes/${classId}/members`, undefined, teacher.cookie);
+  assert.equal(teacherView.data.members[0].publicId, student.data.user.publicId);
+  assert.equal((await request(`/classes/${classId}/notes/${teacherView.data.members[0].studentId}`, { body: 'Cần hỗ trợ thêm.' }, teacher.cookie)).status, 200);
+  assert.equal((await request(`/classes/${classId}/invite`, { studentId: student.data.user.publicId }, teacher.cookie)).status, 409);
+  assert.equal((await request(`/classes/${classId}/invite`, { studentId: another.data.user.publicId }, teacher.cookie)).status, 201);
+});
+
 test('review snapshots are private, stable and only identical choice paths are replaced', async t => {
   const { request, register, db } = await fixture(t);
   const alice = await register('review_alice');
@@ -195,7 +225,7 @@ test('legacy results migrate once, deduplicate by exact path and keep unrelated 
   const databasePath = path.join(directory, 'test.sqlite');
   t.after(() => rmSync(directory, { recursive: true, force: true }));
   const first = await createApp({ databasePath });
-  for (const id of ['alice', 'bob']) first.db.prepare('INSERT INTO users VALUES (?,?,?,?,?)').run(id, id, id, 'hash', 1);
+  for (const id of ['alice', 'bob']) first.db.prepare('INSERT INTO users(id,username,nickname,password_hash,created_at,full_name,role,public_id) VALUES (?,?,?,?,?,?,?,?)').run(id, id, id, 'hash', 1, id, 'student', `S00000000${id === 'alice' ? '1' : '2'}`);
   const insert = first.db.prepare('INSERT INTO attempts(id,user_id,lesson_id,lesson_version,lesson_title,is_demo,answers,score,created_at,completed_at) VALUES (?,?,?,?,?,0,?,?,1,?)');
   const answers = JSON.stringify([{ nodeId: 'Scene 1', choiceId: '1.4', points: 2, maxPoints: 2 }]);
   insert.run('older', 'alice', 'lua-dao', lessons[0].version, 'Lừa đảo', answers, 100, 1000);
@@ -245,7 +275,7 @@ test('updated lesson versions reject old attempts on choices and advance', async
 test('production uses HTTPS-only cookies and security headers', async t => {
   await assert.rejects(() => createApp({ databasePath: ':memory:', production: true, origin }), /HTTPS/);
   const { request } = await fixture(t, { production: true, origin: 'https://kidguard.example' });
-  const result = await request('/auth/register', { username: 'secure_hero', nickname: 'Nhí', password: 'long-password-123' }, null, { origin: 'https://kidguard.example' });
+  const result = await request('/auth/register', { username: 'secure_hero', nickname: 'Nhí', fullName: 'Bạn Nhí', password: 'long-password-123' }, null, { origin: 'https://kidguard.example' });
   assert.equal(result.status, 201);
   assert.match(result.headers.get('set-cookie'), /Secure/);
   assert.match(result.headers.get('content-security-policy'), /frame-ancestors 'none'/);
@@ -260,7 +290,7 @@ test('stored users and history survive a database reopen', async t => {
   const databasePath = path.join(directory, 'test.sqlite');
   t.after(() => rmSync(directory, { recursive: true, force: true }));
   const first = await createApp({ databasePath });
-  first.db.prepare('INSERT INTO users VALUES (?,?,?,?,?)').run('id1', 'persisted_hero', 'Nhí', 'hash', Date.now());
+  first.db.prepare('INSERT INTO users(id,username,nickname,password_hash,created_at,full_name,role,public_id) VALUES (?,?,?,?,?,?,?,?)').run('id1', 'persisted_hero', 'Nhí', 'hash', Date.now(), 'Bạn Nhí', 'student', 'S000000001');
   first.db.prepare('INSERT INTO attempts(id,user_id,lesson_id,lesson_version,lesson_title,is_demo,score,created_at,completed_at) VALUES (?,?,?,?,?,?,?,?,?)').run('a1', 'id1', 'demo', 1, 'Demo', 1, 67, Date.now(), Date.now());
   first.close();
   const second = await createApp({ databasePath });
@@ -284,6 +314,7 @@ test('all official nodes are reachable, terminate and reference existing media',
         }
       }
       if (lesson.id === 'lua-dao') assert.ok(node.video, `Missing fraud video: ${id}`);
+      if (lesson.id === 'bao-luc-hoc-duong') assert.ok(node.video, `Missing bullying video: ${id}`);
       if (node.kind === 'ending') { assert.equal(node.next, null); assert.ok(node.analysis); return; }
       const nextVisited = new Set([...visited, id]);
       if (node.kind === 'narrative') { visit(node.next, nextVisited); return; }

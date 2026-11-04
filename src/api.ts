@@ -1,4 +1,4 @@
-export type User = { id: string; username: string; nickname: string };
+export type User = { id: string; username: string; nickname: string; fullName: string; role: 'student' | 'teacher'; publicId: string };
 export type Lesson = { id: string; title: string; category: string; topic: string; theme: string; icon: string; description: string; duration: string | null; status: string; cover: string; mediaNote: string };
 export type StoryNode = { id: string; title: string; text: string; kind: 'question' | 'narrative' | 'ending'; analysis?: string; help?: string; video: { src: string; poster?: string; captions?: string } | null; choices: { id: string; text: string }[] };
 export type Evaluation = { level: 'confident' | 'growing' | 'practice'; message: string };

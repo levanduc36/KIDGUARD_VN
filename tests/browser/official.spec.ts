@@ -160,7 +160,7 @@ test('staged player retries failed video, gates transitions and handles missing 
   await page.goto('/');
   const register = await page.request.post('/api/auth/register', {
     headers: { origin: 'http://127.0.0.1:4173', 'x-kidguard-request': '1' },
-    data: { username: `flow_${testInfo.project.name}_${Date.now()}`, nickname: 'Báº¡n nhá»', password: 'Test-video-flow-password' },
+    data: { username: `flow_${testInfo.project.name}_${Date.now()}`, nickname: 'Báº¡n nhá»', fullName: 'Báº¡n nhá» kiá»ƒm thá»­', password: 'Test-video-flow-password' },
   });
   expect(register.status()).toBe(201);
   await page.reload();
@@ -205,11 +205,11 @@ test('staged player retries failed video, gates transitions and handles missing 
   await expect(page.getByRole('heading', { name: 'Äiá»u em cÃ³ thá»ƒ mang theo' })).toBeVisible();
 });
 
-test('all 22 videos decode, seek and support range requests', async ({ page, request }, testInfo) => {
+test('all 29 videos decode, seek and support range requests', async ({ page, request }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop', 'The full media audit only needs one browser instance.');
   test.setTimeout(120_000);
   const manifest = JSON.parse(readFileSync('public/videos/manifest.json', 'utf8')) as { output: string }[];
-  expect(manifest).toHaveLength(22);
+  expect(manifest).toHaveLength(29);
   await page.goto('/');
   for (const entry of manifest) {
     const url = '/' + entry.output.replace(/^public\//, '');

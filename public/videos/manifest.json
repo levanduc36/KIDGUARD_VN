@@ -20,6 +20,16 @@
     "bytes": 4798450
   },
   {
+    "original": "C_04b.mp4",
+    "output": "public/videos/bao-luc-hoc-duong/c-04b.mp4",
+    "bytes": 6325416
+  },
+  {
+    "original": "C_05.mp4",
+    "output": "public/videos/bao-luc-hoc-duong/c-05.mp4",
+    "bytes": 3064714
+  },
+  {
     "original": "end 2a.1.mp4",
     "output": "public/videos/lua-dao/end-2a-1.mp4",
     "bytes": 3210040
@@ -68,6 +78,31 @@
     "original": "end 6.4.mp4",
     "output": "public/videos/lua-dao/end-6-4.mp4",
     "bytes": 1643965
+  },
+  {
+    "original": "END_BAD_1.mp4",
+    "output": "public/videos/bao-luc-hoc-duong/end-bad-1.mp4",
+    "bytes": 5915864
+  },
+  {
+    "original": "END_BAD_2.mp4",
+    "output": "public/videos/bao-luc-hoc-duong/end-bad-2.mp4",
+    "bytes": 5427529
+  },
+  {
+    "original": "END_BAD_3.mp4",
+    "output": "public/videos/bao-luc-hoc-duong/end-bad-3.mp4",
+    "bytes": 5989995
+  },
+  {
+    "original": "END_BAD_4.mp4",
+    "output": "public/videos/bao-luc-hoc-duong/end-bad-4.mp4",
+    "bytes": 5530472
+  },
+  {
+    "original": "END_GOOD.mp4",
+    "output": "public/videos/bao-luc-hoc-duong/end-good.mp4",
+    "bytes": 13630799
   },
   {
     "original": "sau option 1.1.mp4",

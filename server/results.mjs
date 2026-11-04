@@ -47,6 +47,7 @@ export function migrateResults(db, lessons) {
   try {
     if (!columns.includes('review_json')) db.exec('ALTER TABLE attempts ADD COLUMN review_json TEXT');
     if (!columns.includes('route_key')) db.exec('ALTER TABLE attempts ADD COLUMN route_key TEXT');
+    if (!columns.includes('teacher_score')) db.exec('ALTER TABLE attempts ADD COLUMN teacher_score INTEGER');
     // Older app processes may have inserted legacy rows after the first migration.
     // Rebuild the constraint inside this transaction after normalizing those rows.
     db.exec('DROP INDEX IF EXISTS attempts_unique_route');
@@ -62,7 +63,12 @@ export function migrateResults(db, lessons) {
       const ending = lesson?.nodes[endingId];
       const review = reviewFor(row, answers, lesson, ending, row.score ?? 0);
       // Empty legacy answers cannot establish that two histories are identical.
-      db.prepare('UPDATE attempts SET review_json=?, route_key=?, score=NULL WHERE id=?').run(JSON.stringify(review), answers.length ? routeKey(row, answers) : null, row.id);
+      db.prepare('UPDATE attempts SET review_json=?, route_key=?, teacher_score=?, score=NULL WHERE id=?').run(JSON.stringify(review), answers.length ? routeKey(row, answers) : null, row.score ?? 0, row.id);
+    }
+    for (const row of db.prepare('SELECT id, review_json FROM attempts WHERE completed_at IS NOT NULL AND is_demo=0 AND review_json IS NOT NULL AND teacher_score IS NULL').all()) {
+      const level = JSON.parse(row.review_json).evaluation?.level;
+      const fallback = level === 'confident' ? 90 : level === 'growing' ? 65 : 25;
+      db.prepare('UPDATE attempts SET teacher_score=? WHERE id=?').run(fallback, row.id);
     }
     db.exec(`DELETE FROM attempts WHERE rowid IN (
       SELECT rowid FROM (SELECT rowid, ROW_NUMBER() OVER (
@@ -84,7 +90,7 @@ export function completeAttempt(db, attempt, lesson, node, answers) {
   db.exec('BEGIN IMMEDIATE');
   try {
     db.prepare('DELETE FROM attempts WHERE user_id=? AND lesson_id=? AND route_key=? AND completed_at IS NOT NULL AND is_demo=0 AND id<>?').run(attempt.user_id, lesson.id, key, attempt.id);
-    db.prepare('UPDATE attempts SET current_node=NULL, answers=?, score=NULL, completed_at=?, review_json=?, route_key=? WHERE id=?').run(JSON.stringify(answers), completedAt, JSON.stringify(review), key, attempt.id);
+    db.prepare('UPDATE attempts SET current_node=NULL, answers=?, teacher_score=?, score=NULL, completed_at=?, review_json=?, route_key=? WHERE id=?').run(JSON.stringify(answers), score, completedAt, JSON.stringify(review), key, attempt.id);
     db.exec('COMMIT');
   } catch (error) { db.exec('ROLLBACK'); throw error; }
   return resultDetail({ ...attempt, completed_at: completedAt, review_json: JSON.stringify(review) });
