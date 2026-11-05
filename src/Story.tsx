@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, BookOpen, Check, Leaf, Play, RotateCcw } from 'lucide-react';
-import { api, type ChoiceResponse, type Lesson, type Result, type StoryNode } from './api';
+import { api, ApiError, type ChoiceResponse, type Lesson, type Result, type StoryNode } from './api';
 
 export type ActiveStory = { id: string; node: StoryNode; answered: number; lesson: Lesson };
 
@@ -25,18 +25,27 @@ export function Story({ story, onUpdate, onComplete }: { story: ActiveStory; onU
     if (value.result) { onComplete(value.result); return; }
     if (value.nextNode) onUpdate({ ...story, node: value.nextNode, answered: value.answered });
   }
+  async function recover(failure: unknown) {
+    if (failure instanceof ApiError && (failure.status === 0 || failure.status === 409 || failure.status >= 500)) {
+      try {
+        const state = await api<Pick<ChoiceResponse, 'nextNode' | 'answered' | 'result'>>(`/attempts/${story.id}`);
+        if (state.result || (state.nextNode && state.nextNode.id !== story.node.id)) { move(state); return; }
+      } catch { /* Keep the current choice so the learner can retry when online. */ }
+    }
+    setError(failure instanceof Error ? failure.message : 'Chưa ghi nhận được lựa chọn. Em thử lại nhé.');
+  }
   async function submit() {
     if (!ready || !selected || pending) return;
     setPending(true); setError('');
     try { move(await api<ChoiceResponse>(`/attempts/${story.id}/choices`, { nodeId: story.node.id, choiceId: selected })); }
-    catch (err) { setError(err instanceof Error ? err.message : 'Chưa ghi nhận được lựa chọn. Em thử lại nhé.'); }
+    catch (err) { await recover(err); }
     finally { setPending(false); }
   }
   async function advance() {
     if (!ready || pending) return;
     setPending(true); setError('');
     try { move(await api<Pick<ChoiceResponse, 'nextNode' | 'answered' | 'result'>>(`/attempts/${story.id}/advance`, { nodeId: story.node.id })); }
-    catch (err) { setError(err instanceof Error ? err.message : 'Chưa tiếp tục được câu chuyện. Em thử lại nhé.'); }
+    catch (err) { await recover(err); }
     finally { setPending(false); }
   }
   async function replay() {

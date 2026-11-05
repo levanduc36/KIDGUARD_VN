@@ -7,7 +7,7 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { createApp } from '../server/app.mjs';
 import { lessons } from '../server/content.mjs';
-import { evaluationFor } from '../server/results.mjs';
+import { evaluationFor, migrateResults } from '../server/results.mjs';
 
 const origin = 'http://localhost:5173';
 const headers = { origin, 'content-type': 'application/json', 'x-kidguard-request': '1' };
@@ -148,6 +148,105 @@ test('account login throttling is enforced', async t => {
   const { request } = await fixture(t, { authLimit: 2 });
   for (let i = 0; i < 2; i++) assert.equal((await request('/auth/login', { username: 'nobody', password: 'wrong' })).status, 401);
   assert.equal((await request('/auth/login', { username: 'nobody', password: 'wrong' })).status, 429);
+});
+
+test('parallel login checks reserve an atomic account budget and reset after expiry or success', async t => {
+  const { request, register, db } = await fixture(t);
+  await register('parallel_hero');
+  const wrong = { username: 'parallel_hero', password: 'wrong' };
+  const burst = await Promise.all(Array.from({ length: 18 }, () => request('/auth/login', wrong)));
+  assert.equal(burst.filter(r => r.status === 401).length, 10);
+  assert.equal(burst.filter(r => r.status === 429).length, 8);
+  assert.equal(db.prepare('SELECT count FROM login_failures WHERE username=?').get(wrong.username).count, 10);
+  assert.equal((await request('/auth/login', { ...wrong, password: 'a-strong-passphrase-123' })).status, 429);
+  db.prepare('UPDATE login_failures SET until_at=? WHERE username=?').run(Date.now() - 1, wrong.username);
+  assert.equal((await request('/auth/login', { ...wrong, password: 'a-strong-passphrase-123' })).status, 200);
+  assert.equal(db.prepare('SELECT count FROM login_failures WHERE username=?').get(wrong.username), undefined);
+  assert.equal((await request('/auth/login', wrong)).status, 401);
+  assert.equal(db.prepare('SELECT count FROM login_failures WHERE username=?').get(wrong.username).count, 1);
+});
+
+test('attempt recovery returns the saved position or result only to its owner', async t => {
+  const { request, register } = await fixture(t);
+  const owner = await register('recovery_owner'), stranger = await register('recovery_other');
+  const start = await request('/attempts', { lessonId: 'lua-dao' }, owner.cookie);
+  const url = `/attempts/${start.data.id}`;
+  assert.equal((await request(url)).status, 401);
+  assert.equal((await request(url, undefined, stranger.cookie)).status, 404);
+  assert.equal((await request(url, undefined, owner.cookie)).data.nextNode.id, 'Scene 1');
+  const moved = await request(`${url}/choices`, { nodeId: 'Scene 1', choiceId: '1.4' }, owner.cookie);
+  const saved = await request(url, undefined, owner.cookie);
+  assert.equal(saved.data.nextNode.id, moved.data.nextNode.id);
+  assert.equal(saved.data.answered, 1);
+  assert.equal((await request(`${url}/choices`, { nodeId: 'Scene 1', choiceId: '1.1' }, owner.cookie)).status, 409);
+  const finished = await request(`${url}/advance`, { nodeId: saved.data.nextNode.id }, owner.cookie);
+  for (let index = 0; index < 2; index++) {
+    const recovered = await request(url, undefined, owner.cookie);
+    assert.deepEqual(recovered.data.result, finished.data.result);
+    assert.equal(recovered.data.nextNode, null);
+    assert.doesNotMatch(JSON.stringify(recovered.data), /"(?:score|teacher_score|points|maxPoints)":/);
+  }
+});
+
+test('class invitations, expiry, notes and removal preserve membership boundaries', async t => {
+  const { request, register, db } = await fixture(t);
+  const code = 'TEACH-CLASS-REGRESSION';
+  db.prepare('INSERT INTO teacher_access_codes(code_hash,label,created_at) VALUES (?,?,?)').run(createHash('sha256').update(code).digest('hex'), 'test', Date.now());
+  const teacher = await request('/auth/register', { username: 'regression_teacher', fullName: 'Giáo viên kiểm thử', role: 'teacher', teacherCode: code, password: 'a-test-password' });
+  const student = await register('regression_student');
+  const outsider = await register('regression_outsider');
+  const a = (await request('/classes', { name: 'Lớp A' }, teacher.cookie)).data.class;
+  const b = (await request('/classes', { name: 'Lớp B' }, teacher.cookie)).data.class;
+  const id = student.data.user.id;
+  for (const classroom of [a, b]) {
+    await request(`/classes/${classroom.id}/invite`, { studentId: student.data.user.publicId }, teacher.cookie);
+    const invitation = (await request('/classes', undefined, student.cookie)).data.invitations.find(i => i.classId === classroom.id);
+    const responseUrl = `/classes/${classroom.id}/requests/${invitation.id}/respond`;
+    assert.equal((await request(responseUrl, { decision: 'accept' }, teacher.cookie)).status, 403);
+    assert.equal((await request(responseUrl, { decision: 'accept' }, outsider.cookie)).status, 403);
+    assert.equal((await request(responseUrl, { decision: 'accept' }, student.cookie)).status, 200);
+    assert.equal((await request(`/classes/${classroom.id}/notes/${id}`, { body: classroom.name }, teacher.cookie)).status, 200);
+  }
+  assert.equal((await request('/classes', undefined, student.cookie)).data.invitations.length, 0);
+  assert.equal((await request(`/classes/${a.id}/notes/${id}`, { body: '' }, student.cookie)).status, 403);
+  assert.equal((await request(`/classes/${a.id}/notes/${id}`, { body: '   ' }, teacher.cookie)).status, 200);
+  assert.equal((await request(`/classes/${a.id}/members`, undefined, teacher.cookie)).data.members[0].note, null);
+  assert.equal((await request(`/classes/${b.id}/members`, undefined, teacher.cookie)).data.members[0].note.body, 'Lớp B');
+  assert.equal((await request(`/classes/${a.id}/members/${id}/remove`, {}, student.cookie)).status, 403);
+  assert.equal((await request(`/classes/${a.id}/members/${id}/remove`, {}, teacher.cookie)).status, 200);
+  assert.equal((await request(`/classes/${a.id}/members`, undefined, student.cookie)).status, 403);
+  assert.equal((await request(`/classes/${b.id}/members`, undefined, student.cookie)).status, 200);
+  await request(`/classes/${a.id}/invite`, { studentId: student.data.user.publicId }, teacher.cookie);
+  const expired = (await request('/classes', undefined, student.cookie)).data.invitations[0];
+  db.prepare('UPDATE class_requests SET expires_at=? WHERE id=?').run(Date.now() - 1, expired.id);
+  assert.equal((await request(`/classes/${a.id}/requests/${expired.id}/respond`, { decision: 'accept' }, student.cookie)).status, 404);
+  assert.equal((await request('/classes', undefined, student.cookie)).data.invitations.length, 0);
+  await request('/classes/join', { code: a.joinCode }, outsider.cookie);
+  assert.equal((await request('/classes', undefined, teacher.cookie)).data.classes.find(c => c.id === a.id).pendingCount, 1);
+});
+
+test('score migration repairs approximate rankings using retained answers and leaves unknown scores unknown', async t => {
+  const { register, db } = await fixture(t);
+  const owner = await register('migration_scores');
+  const insert = db.prepare(`INSERT INTO attempts(id,user_id,lesson_id,lesson_version,lesson_title,is_demo,answers,teacher_score,review_json,created_at,completed_at)
+    VALUES (?,?,'lua-dao',?,'Lừa đảo',0,?,?,?,1,2)`);
+  for (const [id, answers, approximate] of [
+    ['perfect', [{ nodeId: 'Scene 1', choiceId: '1.4', points: 2, maxPoints: 2 }], 90],
+    ['half', [{ nodeId: 'Scene 1', choiceId: '1.1', points: 1, maxPoints: 2 }], 65],
+    ['unknown', [], 65],
+    ['unmigrated', [{ nodeId: 'Scene 1', choiceId: '1.2', points: 0, maxPoints: 2 }], null],
+  ]) insert.run(id, owner.data.user.id, lessons[0].version, JSON.stringify(answers), approximate, JSON.stringify({ evaluation: evaluationFor(approximate ?? 0), choices: [] }));
+  db.prepare('DELETE FROM schema_migrations WHERE name=?').run('exact_teacher_scores_v1');
+  db.prepare(`INSERT INTO attempts(id,user_id,lesson_id,lesson_version,lesson_title,is_demo,answers,score,created_at,completed_at)
+    VALUES ('original-score',?,'lua-dao',?,'Lừa đảo',0,'[]',65,1,2)`).run(owner.data.user.id, lessons[0].version);
+  for (let index = 0; index < 2; index++) {
+    migrateResults(db, lessons);
+    assert.equal(db.prepare('SELECT teacher_score FROM attempts WHERE id=?').get('perfect').teacher_score, 100);
+    assert.equal(db.prepare('SELECT teacher_score FROM attempts WHERE id=?').get('half').teacher_score, 50);
+    assert.equal(db.prepare('SELECT teacher_score FROM attempts WHERE id=?').get('unknown').teacher_score, null);
+    assert.equal(db.prepare('SELECT teacher_score FROM attempts WHERE id=?').get('unmigrated').teacher_score, 0);
+    assert.equal(db.prepare('SELECT teacher_score FROM attempts WHERE id=?').get('original-score').teacher_score, 65);
+  }
 });
 
 test('teacher codes, class membership and learner privacy are enforced', async t => {

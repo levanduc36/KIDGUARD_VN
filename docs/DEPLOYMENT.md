@@ -11,6 +11,7 @@
 
 ```dotenv
 SITE_DOMAIN=hoc.ten-mien-cua-ban.vn
+ADMIN_SETUP_SECRET=thay-bang-chuoi-ngau-nhien-dai-cua-ban
 ```
 
 ## 2. Khởi động
@@ -23,6 +24,20 @@ docker compose logs -f app caddy
 Mở `https://hoc.ten-mien-cua-ban.vn`. Caddy nhận HTTPS và chuyển request tới ứng dụng trên mạng nội bộ của Docker. Ứng dụng chạy bằng tài khoản `node`, bật cookie Secure và chỉ chấp nhận Origin đã cấu hình.
 
 Database được lưu trong volume `kidguard_data`. `docker compose down` giữ lại dữ liệu; **không chạy `docker compose down -v`** nếu cần giữ tài khoản và lịch sử.
+
+### Tạo mã giáo viên trên hosting
+
+Tạo một secret riêng cho máy chủ, ví dụ bằng `node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"`, rồi lưu giá trị đó vào `ADMIN_SETUP_SECRET` trong `.env` trên máy chủ. Không dùng nguyên giá trị mẫu. Khi thay secret, chạy lại `docker compose up -d` để container nhận cấu hình mới.
+
+Sau khi ứng dụng khởi động, chạy CLI **bên trong container app** để dùng đúng database trong volume:
+
+```sh
+docker compose exec -it app npm run teacher-code -- create "Tên giáo viên" --days 90
+```
+
+CLI yêu cầu nhập secret nhưng ẩn nội dung đang nhập. Mã giáo viên được in sau khi tạo thành công, dùng một lần, hết hạn sau 90 ngày; gửi mã đó riêng cho giáo viên. Có thể đổi số ngày từ 1 đến 365. Không cần ghi secret vào lệnh shell. Nếu quên cấu hình secret, ứng dụng vẫn chạy nhưng CLI không cho tạo mã.
+
+Khi chạy trực tiếp bằng Node trên máy local, lệnh tương ứng là `npm run teacher-code -- create "Tên giáo viên" --days 90`. Cách gọi cũ có secret trong đối số vẫn tương thích, nhưng nên dùng cách nhập ẩn mới. Không tạo mã trên database local nếu định dùng cho website trên hosting.
 
 ## 3. Cập nhật
 

@@ -27,10 +27,10 @@ Mở **http://localhost:3001**. Không đặt `NODE_ENV=production` khi dùng HT
 Đặt `ADMIN_SETUP_SECRET` dài, ngẫu nhiên trong `.env` (không đưa file này lên Git). Sau khi đã chạy ứng dụng ít nhất một lần để tạo database, tạo một mã dùng một lần bằng PowerShell:
 
 ```powershell
-npm run teacher-code -- create "Tên giáo viên" "giá-trị-ADMIN_SETUP_SECRET" 90
+npm run teacher-code -- create "Tên giáo viên" --days 90
 ```
 
-Lệnh in ra mã `TEACH-...`, có hiệu lực 90 ngày trong ví dụ. Gửi mã qua một kênh riêng tư; mã chỉ được lưu dạng băm và tự trở thành không dùng được sau khi một giáo viên đăng ký thành công.
+Nhập `ADMIN_SETUP_SECRET` khi được hỏi; nội dung nhập được ẩn và không cần ghi secret vào lệnh. Lệnh in ra mã `TEACH-...`, có hiệu lực 90 ngày trong ví dụ. Gửi mã qua một kênh riêng tư; mã chỉ được lưu dạng băm và tự trở thành không dùng được sau khi một giáo viên đăng ký thành công.
 
 ## Đã có
 

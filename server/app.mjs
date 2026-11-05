@@ -203,16 +203,23 @@ export async function createApp(options = {}) {
     const parsed = loginSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ error: 'Tên đăng nhập hoặc mật khẩu chưa đúng.' });
     const { username, password } = parsed.data;
-    const failed = db.prepare('SELECT * FROM login_failures WHERE username=? AND until_at>?').get(username, Date.now());
-    if (failed?.count >= 10) return res.status(429).json({ error: 'Đã thử quá nhiều lần. Vui lòng đợi 15 phút rồi thử lại.' });
+    // Reserve a trial before the asynchronous hash check. Parallel requests must
+    // share the same budget, including requests still being verified.
+    const now = Date.now();
+    const trial = db.prepare(`INSERT INTO login_failures(username,count,until_at) VALUES (?,1,?)
+      ON CONFLICT(username) DO UPDATE SET
+        count=CASE WHEN login_failures.until_at<=? THEN 1 ELSE login_failures.count+1 END,
+        until_at=CASE WHEN login_failures.until_at<=? THEN excluded.until_at ELSE login_failures.until_at END
+      WHERE login_failures.until_at<=? OR login_failures.count<10
+      RETURNING until_at`).get(username, now + 15 * 60_000, now, now, now);
+    if (!trial) return res.status(429).json({ error: 'Đã thử quá nhiều lần. Vui lòng đợi 15 phút rồi thử lại.' });
     const user = db.prepare('SELECT * FROM users WHERE username=?').get(username);
     const [salt, stored] = user ? user.password_hash.split(':') : [fakeSalt, fakeHash.toString('hex')];
     const key = await derive(password, salt, 64, { N: 32768, r: 8, p: 1, maxmem: 64 * 1024 * 1024 });
     if (!timingSafeEqual(key, Buffer.from(stored, 'hex')) || !user) {
-      db.prepare('INSERT INTO login_failures VALUES (?,?,?) ON CONFLICT(username) DO UPDATE SET count=excluded.count, until_at=excluded.until_at').run(username, (failed?.count ?? 0) + 1, failed?.until_at ?? Date.now() + 15 * 60_000);
       return res.status(401).json({ error: 'Tên đăng nhập hoặc mật khẩu chưa đúng.' });
     }
-    db.prepare('DELETE FROM login_failures WHERE username=?').run(username);
+    db.prepare('DELETE FROM login_failures WHERE username=? AND until_at=?').run(username, trial.until_at);
     setSession(req, res, user.id);
     res.json({ user: userShape(user) });
   });
@@ -249,6 +256,16 @@ export async function createApp(options = {}) {
     if (!completed) db.prepare('UPDATE attempts SET current_node=?, answers=? WHERE id=?').run(choice.next, JSON.stringify(answers), attempt.id);
     res.json({ feedback: choice.feedback, positive: choice.points === Math.max(...node.choices.map(c => c.points)), nextNode: completed ? null : publicNode(lesson, choice.next), answered: answers.length, result });
   });
+  // Recover the authoritative position after a response is lost. Never expose
+  // another user's attempt or internal scores, even for completed attempts.
+  app.get('/api/attempts/:id', requireUser, (req, res) => {
+    const attempt = db.prepare('SELECT * FROM attempts WHERE id=? AND user_id=?').get(req.params.id, req.user.id);
+    if (!attempt) return res.status(404).json({ error: 'Không tìm thấy lượt làm bài.' });
+    if (attempt.completed_at && attempt.review_json) return res.json({ nextNode: null, answered: JSON.parse(attempt.answers).length, result: resultDetail(attempt) });
+    const lesson = lessons.find(item => item.id === attempt.lesson_id);
+    if (!lesson?.nodes || lesson.version !== attempt.lesson_version) return res.status(409).json({ error: 'Bài học đã cập nhật. Em hãy bắt đầu lượt mới nhé.' });
+    res.json({ nextNode: publicNode(lesson, attempt.current_node), answered: JSON.parse(attempt.answers).length, result: null });
+  });
   app.post('/api/attempts/:id/advance', requireUser, (req, res) => {
     const input = z.object({ nodeId: z.string().max(80) }).strict().safeParse(req.body);
     if (!input.success) return res.status(400).json({ error: 'Bước học không hợp lệ.' });
@@ -277,7 +294,10 @@ export async function createApp(options = {}) {
   app.get('/api/classes', requireUser, (req, res) => {
     expireRequests();
     if (req.user.role === 'teacher') {
-      const classes = db.prepare(`SELECT c.*, COUNT(DISTINCT m.student_id) AS member_count, COUNT(DISTINCT CASE WHEN r.status='pending' AND r.kind='join_request' THEN r.id END) AS pending_count FROM classes c LEFT JOIN class_members m ON m.class_id=c.id LEFT JOIN class_requests r ON r.class_id=c.id WHERE c.owner_teacher_id=? GROUP BY c.id ORDER BY c.created_at DESC`).all(req.user.id).map(row => ({ id: row.id, name: row.name, joinCode: row.join_code, createdAt: row.created_at, memberCount: row.member_count, pendingCount: row.pending_count }));
+      const classes = db.prepare(`SELECT c.*,
+        (SELECT COUNT(*) FROM class_members m WHERE m.class_id=c.id) AS member_count,
+        (SELECT COUNT(*) FROM class_requests r WHERE r.class_id=c.id AND r.status='pending' AND r.kind='join_request') AS pending_count
+        FROM classes c WHERE c.owner_teacher_id=? ORDER BY c.created_at DESC`).all(req.user.id).map(row => ({ id: row.id, name: row.name, joinCode: row.join_code, createdAt: row.created_at, memberCount: row.member_count, pendingCount: row.pending_count }));
       return res.json({ classes, invitations: [], requests: [] });
     }
     const classes = db.prepare(`SELECT c.id,c.name,c.join_code,c.created_at,u.full_name AS teacher_name FROM class_members m JOIN classes c ON c.id=m.class_id JOIN users u ON u.id=c.owner_teacher_id WHERE m.student_id=? ORDER BY c.created_at DESC`).all(req.user.id).map(row => ({ id: row.id, name: row.name, joinCode: row.join_code, createdAt: row.created_at, teacherName: row.teacher_name }));
@@ -367,8 +387,12 @@ export async function createApp(options = {}) {
   });
   app.post('/api/classes/:id/notes/:studentId', requireUser, requireTeacher, (req, res) => {
     if (!classForTeacher(req.params.id, req.user.id) || !isMember(req.params.id, req.params.studentId)) return res.status(404).json({ error: 'Không tìm thấy học sinh trong lớp.' });
-    const parsed = z.object({ body: z.string().trim().min(1).max(2000) }).strict().safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: 'Ghi chú cần có từ 1 đến 2000 ký tự.' });
+    const parsed = z.object({ body: z.string().trim().max(2000) }).strict().safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ error: 'Ghi chú không được vượt quá 2000 ký tự.' });
+    if (!parsed.data.body) {
+      db.prepare('DELETE FROM class_notes WHERE class_id=? AND student_id=? AND teacher_id=?').run(req.params.id, req.params.studentId, req.user.id);
+      return res.json({ ok: true });
+    }
     db.prepare('INSERT INTO class_notes(class_id,student_id,teacher_id,body,updated_at) VALUES (?,?,?,?,?) ON CONFLICT(class_id,student_id,teacher_id) DO UPDATE SET body=excluded.body,updated_at=excluded.updated_at').run(req.params.id, req.params.studentId, req.user.id, parsed.data.body, Date.now());
     res.json({ ok: true });
   });

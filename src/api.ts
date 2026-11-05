@@ -15,7 +15,9 @@ export async function api<T>(path: string, body?: unknown): Promise<T> {
       body: body === undefined ? undefined : JSON.stringify(body),
     });
   } catch { throw new ApiError('Chưa kết nối được với máy chủ. Em kiểm tra mạng rồi thử lại nhé.', 0); }
-  const data = await response.json().catch(() => ({}));
+  let data;
+  try { data = await response.json(); }
+  catch { throw new ApiError('Chưa nhận đủ phản hồi từ máy chủ. Vui lòng thử lại.', response.ok ? 502 : response.status); }
   if (!response.ok) {
     if (response.status === 401 && !path.startsWith('/auth/')) window.dispatchEvent(new Event('session-expired'));
     throw new ApiError(data.error || 'Có lỗi xảy ra. Em thử lại nhé.', response.status);

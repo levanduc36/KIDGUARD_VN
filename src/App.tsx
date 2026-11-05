@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
-import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ChevronDown, ChevronRight, Clock3, Copy, Eye, EyeOff, Heart, HelpCircle, Home, Leaf, LockKeyhole, LogOut, Menu, Play, Settings, ShieldCheck, Sparkles, Star, Trophy, Video, X, School, Users, UserPlus, ClipboardCheck, Trash2 } from 'lucide-react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ChevronRight, Clock3, Copy, Eye, EyeOff, Heart, HelpCircle, Home, Leaf, LockKeyhole, LogOut, Menu, Play, Settings, ShieldCheck, Sparkles, Star, Trophy, Video, X, School } from 'lucide-react';
 import { api, type Attempt, type Lesson, type Result, type User } from './api';
 
 import { HistoryPanel, ResultScreen } from './Results';
 import { Story, type ActiveStory } from './Story';
+import { Modal } from './Modal';
+import { Classes, type ClassData } from './Classes';
 
 type Page = 'home' | 'library' | 'achievements' | 'classes' | 'settings';
 type AuthMode = 'login' | 'register';
@@ -11,16 +13,6 @@ const errorMessage = (error: unknown) => error instanceof Error ? error.message 
 
 function Brand({ compact = false }: { compact?: boolean }) {
   return <span className={`brand ${compact ? 'compact' : ''}`}><img src="/assets/logo.webp" alt="" width="48" height="44" /><span><strong>KIDGUARD<span> VN</span></strong><small>KHIÊN CHẮN NHÍ</small></span></span>;
-}
-function Modal({ title, children, onClose, wide = false }: { title: string; children: ReactNode; onClose: () => void; wide?: boolean }) {
-  const ref = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    const dialog = ref.current;
-    const previous = document.activeElement as HTMLElement | null;
-    dialog?.showModal();
-    return () => { dialog?.close(); previous?.focus(); };
-  }, []);
-  return <dialog ref={ref} className={`modal ${wide ? 'wide' : ''}`} aria-labelledby="modal-title" onCancel={event => { event.preventDefault(); onClose(); }} onClick={event => { if (event.target === event.currentTarget) onClose(); }}><div className="modal-body"><div className="modal-header"><h2 id="modal-title">{title}</h2><button className="icon-button" onClick={onClose} aria-label="Đóng"><X size={22} /></button></div>{children}</div></dialog>;
 }
 function AuthForm({ initialMode, onSuccess }: { initialMode: AuthMode; onSuccess: (user: User) => void }) {
   const [mode, setMode] = useState(initialMode);
@@ -85,33 +77,6 @@ function Achievements({ attempts, onOpen, onLibrary, teacher = false }: { attemp
   </>;
 }
 
-type ClassSummary = { id: string; name: string; joinCode: string; memberCount?: number; pendingCount?: number; teacherName?: string };
-type ClassRequest = { id: string; classId: string; className: string; teacherName?: string; expiresAt: number };
-type Member = { studentId?: string; fullName: string; nickname?: string; publicId?: string; progress?: { lessonId: string; lessonTitle: string; evaluation: { message: string }; completedAt: number }[]; note?: { body: string } | null };
-function Classes({ user }: { user: User }) {
-  const [data, setData] = useState<{ classes: ClassSummary[]; invitations: ClassRequest[]; requests: ClassRequest[] }>({ classes: [], invitations: [], requests: [] });
-  const [selected, setSelected] = useState<ClassSummary | null>(null);
-  const [members, setMembers] = useState<Member[]>([]);
-  const [requests, setRequests] = useState<{ id: string; kind: string; student: { fullName: string; nickname: string; publicId: string } }[]>([]);
-  const [expandedStudentId, setExpandedStudentId] = useState<string | null>(null);
-  const [message, setMessage] = useState('');
-  const refresh = async () => { try { setData(await api<{ classes: ClassSummary[]; invitations: ClassRequest[]; requests: ClassRequest[] }>('/classes')); } catch (error) { setMessage(errorMessage(error)); } };
-  useEffect(() => { void refresh(); }, []);
-  async function openClass(classroom: ClassSummary) { setSelected(classroom); setExpandedStudentId(null); try { const [memberData, requestData] = await Promise.all([api<{ members: Member[] }>(`/classes/${classroom.id}/members`), user.role === 'teacher' ? api<{ requests: typeof requests }>(`/classes/${classroom.id}/requests`) : Promise.resolve({ requests: [] })]); setMembers(memberData.members); setRequests(requestData.requests); } catch (error) { setMessage(errorMessage(error)); } }
-  async function create(event: FormEvent<HTMLFormElement>) { event.preventDefault(); const form = event.currentTarget; try { await api('/classes', { name: new FormData(form).get('name') }); form.reset(); await refresh(); } catch (error) { setMessage(errorMessage(error)); } }
-  async function join(event: FormEvent<HTMLFormElement>) { event.preventDefault(); const form = event.currentTarget; try { await api('/classes/join', { code: new FormData(form).get('code') }); form.reset(); await refresh(); setMessage('Yêu cầu tham gia đã được gửi tới giáo viên.'); } catch (error) { setMessage(errorMessage(error)); } }
-  async function respond(id: string, decision: 'accept' | 'reject') { if (!selected) return; try { await api(`/classes/${selected.id}/requests/${id}/respond`, { decision }); await openClass(selected); await refresh(); } catch (error) { setMessage(errorMessage(error)); } }
-  async function invite(event: FormEvent<HTMLFormElement>) { event.preventDefault(); const form = event.currentTarget; if (!selected) return; try { await api(`/classes/${selected.id}/invite`, { studentId: new FormData(form).get('studentId') }); form.reset(); setMessage('Đã gửi lời mời vào lớp.'); } catch (error) { setMessage(errorMessage(error)); } }
-  async function leaveOrDelete() { if (!selected) return; try { await api(user.role === 'teacher' ? `/classes/${selected.id}/delete` : `/classes/${selected.id}/leave`, {}); setSelected(null); await refresh(); } catch (error) { setMessage(errorMessage(error)); } }
-  async function saveNote(student: Member, event: FormEvent<HTMLFormElement>) { event.preventDefault(); if (!selected || !student.studentId) return; try { await api(`/classes/${selected.id}/notes/${student.studentId}`, { body: new FormData(event.currentTarget).get('note') }); await openClass(selected); } catch (error) { setMessage(errorMessage(error)); } }
-  return <section className={`classes-page ${user.role === 'teacher' ? 'teacher-page' : ''}`}><div className="classes-heading"><div><span className="eyebrow">{user.role === 'teacher' ? 'QUẢN LÝ LỚP HỌC' : 'KẾT NỐI CÙNG LỚP'}</span><h1>Lớp học</h1><p>{user.role === 'teacher' ? 'Tạo lớp, xét yêu cầu và theo dõi tiến độ học tập của học sinh.' : 'Nhập mã lớp để gửi yêu cầu tham gia, hoặc xem lời mời từ giáo viên.'}</p></div><School size={36} /></div>{message && <p className="classes-message" role="status">{message}</p>}
-    {!selected && <><div className="class-actions">{user.role === 'teacher' ? <form onSubmit={create}><label>Tạo lớp mới<input name="name" required minLength={2} maxLength={80} placeholder="Ví dụ: Lớp 5A" /></label><button className="button primary">Tạo lớp</button></form> : <form onSubmit={join}><label>Nhập mã lớp<input name="code" required autoCapitalize="characters" placeholder="KG-XXXXXXXX" /></label><button className="button primary">Gửi yêu cầu</button></form>}</div>
-      {user.role === 'student' && data.invitations.length > 0 && <div className="invitation-box"><strong><UserPlus size={18} /> Lời mời chờ phản hồi</strong>{data.invitations.map(item => <div key={item.id}><span><b>{item.className}</b> · {item.teacherName}</span><button className="button primary" onClick={() => { setSelected({ id: item.classId, name: item.className, joinCode: '' }); void api(`/classes/${item.classId}/requests/${item.id}/respond`, { decision: 'accept' }).then(refresh); }}>Đồng ý</button><button className="button outline" onClick={() => void api(`/classes/${item.classId}/requests/${item.id}/respond`, { decision: 'reject' }).then(refresh)}>Từ chối</button></div>)}</div>}
-      {user.role === 'student' && data.requests.length > 0 && <p className="pending-note"><ClipboardCheck size={18} /> {data.requests.length} yêu cầu đang chờ giáo viên xét duyệt.</p>}
-      <div className="class-grid">{data.classes.map(classroom => <button key={classroom.id} className="class-card" onClick={() => void openClass(classroom)}><Users size={22} /><div><h2>{classroom.name}</h2><p>{user.role === 'teacher' ? `${classroom.memberCount} học sinh · ${classroom.pendingCount ? `${classroom.pendingCount} yêu cầu mới` : 'Không có yêu cầu mới'}` : `Giáo viên: ${classroom.teacherName}`}</p>{user.role === 'teacher' && <code>{classroom.joinCode}</code>}</div><ChevronRight /></button>)}</div>{!data.classes.length && <div className="empty-state"><School size={40} /><p>{user.role === 'teacher' ? 'Chưa có lớp học nào.' : 'Em chưa tham gia lớp học nào.'}</p></div>}</>}
-    {selected && <div className="class-detail"><button className="text-button" onClick={() => setSelected(null)}>← Danh sách lớp</button><div className="class-detail-head"><div><h2>{selected.name}</h2>{user.role === 'teacher' && <p>Mã lớp: <code>{selected.joinCode}</code></p>}</div><button className="button outline danger" onClick={() => void leaveOrDelete()}><Trash2 size={16} />{user.role === 'teacher' ? 'Xóa lớp' : 'Rời lớp'}</button></div>{user.role === 'teacher' && <><form className="invite-form" onSubmit={invite}><label>Mời học sinh bằng ID<input name="studentId" required pattern="S[0-9]{9}" placeholder="S123456789" /></label><button className="button outline">Gửi lời mời</button></form>{requests.length > 0 && <div className="requests-list"><h3>Yêu cầu chờ duyệt</h3>{requests.map(item => <div key={item.id}><span><b>{item.student.fullName}</b> · {item.student.publicId}</span><button onClick={() => void respond(item.id, 'accept')}>Chấp nhận</button><button onClick={() => void respond(item.id, 'reject')}>Từ chối</button></div>)}</div>}</>}<div className="member-list"><h3>Thành viên ({members.length})</h3>{members.map(member => <article key={member.studentId ?? member.fullName} className={user.role === 'teacher' ? 'teacher-member' : ''}>{user.role === 'teacher' ? <><button className="member-toggle" onClick={() => setExpandedStudentId(expandedStudentId === member.studentId ? null : member.studentId ?? null)} aria-expanded={expandedStudentId === member.studentId}><span><strong>{member.fullName}</strong><small>{member.nickname} · {member.publicId}</small></span><ChevronDown size={20} className={expandedStudentId === member.studentId ? 'open' : ''} /></button>{expandedStudentId === member.studentId && <div className="member-detail"><div className="member-progress">{member.progress?.length ? member.progress.map(progress => <p key={progress.lessonId}><b>{progress.lessonTitle}:</b> {progress.evaluation.message}</p>) : <p>Chưa có bài học hoàn thành.</p>}</div><form onSubmit={event => void saveNote(member, event)}><textarea name="note" maxLength={2000} defaultValue={member.note?.body ?? ''} placeholder="Ghi chú riêng cho học sinh này" /><button className="button outline">Lưu ghi chú</button></form></div>}</> : <h4>{member.fullName}</h4>}</article>)}</div></div>}</section>;
-}
-
 function SettingsPage({ user, onBack }: { user: User; onBack: () => void }) {
   const [copied, setCopied] = useState(false);
   async function copyId() {
@@ -140,6 +105,9 @@ export default function App() {
   const [error, setError] = useState('');
   const [mobileMenu, setMobileMenu] = useState(false);
   const [exitConfirm, setExitConfirm] = useState(false);
+  const [nextPage, setNextPage] = useState<Page>('home');
+  const [classDrafts, setClassDrafts] = useState(false);
+  const [discardConfirm, setDiscardConfirm] = useState(false);
   const [logoutConfirm, setLogoutConfirm] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [accountMenu, setAccountMenu] = useState(false);
@@ -153,14 +121,39 @@ export default function App() {
   async function loadData() {
     setDataLoading(true); setDataError('');
     try {
-      const [catalog, history, classData] = await Promise.all([api<{ lessons: Lesson[] }>('/lessons'), api<{ attempts: Attempt[] }>('/history'), api<{ invitations: unknown[]; requests: unknown[] }>('/classes')]);
-      setLessons(catalog.lessons); setAttempts(history.attempts); setClassPending(user?.role === 'teacher' ? classData.requests.length > 0 : classData.invitations.length > 0);
+      const [catalog, history] = await Promise.all([api<{ lessons: Lesson[] }>('/lessons'), api<{ attempts: Attempt[] }>('/history')]);
+      setLessons(catalog.lessons); setAttempts(history.attempts);
     } catch (err) { setDataError(errorMessage(err)); } finally { setDataLoading(false); }
   }
   useEffect(() => { void loadSession(); }, []);
   useEffect(() => { if (user) void loadData(); }, [user?.id]);
   useEffect(() => {
-    const expired = () => { setUser(null); setStory(null); setResult(null); setDetail(null); setHistoryId(null); setLogoutConfirm(false); setExitConfirm(false); setAttempts([]); setLessons([]); setAuth('login'); setError('Phiên đăng nhập đã hết hạn. Em đăng nhập lại để tiếp tục nhé.'); };
+    setClassPending(false);
+    if (!user) return;
+    let active = true, version = 0;
+    const refreshNotifications = async () => {
+      if (document.visibilityState !== 'visible') return;
+      const requestVersion = ++version;
+      try {
+        const value = await api<ClassData>('/classes');
+        if (active && requestVersion === version) setClassPending(user.role === 'teacher'
+          ? value.classes.some(c => (c.pendingCount ?? 0) > 0) : value.invitations.length > 0);
+      } catch { /* Keep the last badge; page actions display actionable errors. */ }
+    };
+    void refreshNotifications();
+    const timer = window.setInterval(refreshNotifications, 30_000);
+    window.addEventListener('focus', refreshNotifications);
+    window.addEventListener('classes-changed', refreshNotifications);
+    document.addEventListener('visibilitychange', refreshNotifications);
+    return () => {
+      active = false; window.clearInterval(timer);
+      window.removeEventListener('focus', refreshNotifications);
+      window.removeEventListener('classes-changed', refreshNotifications);
+      document.removeEventListener('visibilitychange', refreshNotifications);
+    };
+  }, [user?.id, user?.role]);
+  useEffect(() => {
+    const expired = () => { setUser(null); setStory(null); setResult(null); setDetail(null); setHistoryId(null); setLogoutConfirm(false); setExitConfirm(false); setDiscardConfirm(false); setAccountMenu(false); setClassDrafts(false); setAttempts([]); setLessons([]); setAuth('login'); setError('Phiên đăng nhập đã hết hạn. Em đăng nhập lại để tiếp tục nhé.'); };
     window.addEventListener('session-expired', expired);
     return () => window.removeEventListener('session-expired', expired);
   }, []);
@@ -171,7 +164,16 @@ export default function App() {
     return () => window.removeEventListener('beforeunload', handler);
   }, [story]);
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, [page, story?.node.id, result]);
-  function navigate(next: Page) { setPage(next); setResult(null); setMobileMenu(false); setAccountMenu(false); mainRef.current?.focus(); }
+  function commitNavigation(next: Page) {
+    setStory(null); setPage(next); setResult(null); setMobileMenu(false); setAccountMenu(false);
+    mainRef.current?.focus();
+  }
+  function navigate(next: Page) {
+    setAccountMenu(false); setMobileMenu(false);
+    if (story) { setNextPage(next); setExitConfirm(true); return; }
+    if (classDrafts && next !== page) { setNextPage(next); setDiscardConfirm(true); return; }
+    commitNavigation(next);
+  }
   async function startLesson(lessonId: string) {
     setStarting(true); setError(''); setResult(null);
     try { const response = await api<ActiveStory>('/attempts', { lessonId }); setStory(response); setDetail(null); }
@@ -179,7 +181,7 @@ export default function App() {
   }
   async function logout() {
     setLoggingOut(true);
-    try { await api('/auth/logout', {}); setUser(null); setStory(null); setResult(null); setAttempts([]); setLessons([]); setLogoutConfirm(false); setPage('library'); }
+    try { await api('/auth/logout', {}); setUser(null); setStory(null); setResult(null); setAttempts([]); setLessons([]); setLogoutConfirm(false); setAccountMenu(false); setClassDrafts(false); setPage('home'); }
     catch (err) { setError(errorMessage(err)); } finally { setLoggingOut(false); }
   }
   const navItems: { id: Page; label: string; icon: typeof Home }[] = [{ id: 'home', label: 'Trang chủ', icon: Home }, { id: 'library', label: 'Thư viện tình huống', icon: BookOpen }, { id: 'classes', label: 'Lớp học', icon: School }, { id: 'achievements', label: user?.role === 'teacher' ? 'Kết quả của tôi' : 'Thành tựu của em', icon: Trophy }];
@@ -188,15 +190,16 @@ export default function App() {
   if (initialError) return <div className="loading-screen"><Brand /><p role="alert">{initialError}</p><button className="button primary" onClick={loadSession}>Kết nối lại</button></div>;
   return <><a className="skip-link" href="#main-content">Chuyển đến nội dung chính</a>{!user ? <Landing openAuth={setAuth} help={() => setHelp(true)} /> : <div className="app-shell">
     {mobileMenu && <button className="sidebar-scrim" aria-label="Đóng điều hướng" onClick={() => setMobileMenu(false)} />}
-    <aside className={`sidebar ${mobileMenu ? 'open' : ''} ${user.role === 'teacher' ? 'teacher-sidebar' : ''}`}><button className="brand-button" onClick={() => navigate('home')}><Brand compact /></button><span className="nav-caption">{user.role === 'teacher' ? 'KHÔNG GIAN GIÁO VIÊN' : 'GÓC NHỎ CỦA EM'}</span><nav aria-label="Điều hướng chính">{navItems.map(item => <button key={item.id} className={!story && page === item.id ? 'active' : ''} aria-current={!story && page === item.id ? 'page' : undefined} onClick={() => story ? setExitConfirm(true) : navigate(item.id)}><item.icon size={20} /><span>{item.label}</span>{item.id === 'classes' && classPending && <span className="nav-notification" aria-label="Có thông báo mới">!</span>}{!story && page === item.id && <span className="nav-active-dot" />}</button>)}</nav><div className="sidebar-grow" /><button className="help-button" onClick={() => setHelp(true)}><HelpCircle size={20} /><span>Hỗ trợ</span><ChevronRight size={15} /></button></aside>
+    <aside className={`sidebar ${mobileMenu ? 'open' : ''} ${user.role === 'teacher' ? 'teacher-sidebar' : ''}`}><button className="brand-button" onClick={() => navigate('home')}><Brand compact /></button><span className="nav-caption">{user.role === 'teacher' ? 'KHÔNG GIAN GIÁO VIÊN' : 'GÓC NHỎ CỦA EM'}</span><nav aria-label="Điều hướng chính">{navItems.map(item => <button key={item.id} className={!story && page === item.id ? 'active' : ''} aria-current={!story && page === item.id ? 'page' : undefined} onClick={() => navigate(item.id)}><item.icon size={20} /><span>{item.label}</span>{item.id === 'classes' && classPending && <span className="nav-notification" aria-label="Có thông báo mới">!</span>}{!story && page === item.id && <span className="nav-active-dot" />}</button>)}</nav><div className="sidebar-grow" /><button className="help-button" onClick={() => setHelp(true)}><HelpCircle size={20} /><span>Hỗ trợ</span><ChevronRight size={15} /></button></aside>
     <div className="app-body"><header className="app-header"><div className="header-breadcrumb"><button className="icon-button mobile-menu-button" onClick={() => setMobileMenu(!mobileMenu)} aria-label="Mở điều hướng" aria-expanded={mobileMenu}><Menu size={23} /></button><span className="desktop-only">Không gian học tập</span><ChevronRight size={14} /><strong>{story ? story.lesson.title : page === 'settings' ? 'Cài đặt' : navItems.find(item => item.id === page)?.label}</strong></div><div className="user-menu"><span className="user-avatar">{(user.role === 'teacher' ? user.fullName : user.nickname).slice(0, 1).toUpperCase()}</span><span><strong>{user.role === 'teacher' ? user.fullName : user.nickname}</strong>{user.role === 'student' && <small>Người hùng nhí</small>}</span><div className="account-menu-wrap"><button className="icon-button" aria-label="Mở menu tài khoản" title="Menu tài khoản" onClick={() => setAccountMenu(!accountMenu)} aria-expanded={accountMenu}><Menu size={20} /></button>{accountMenu && <div className="account-menu" role="menu"><button role="menuitem" onClick={() => navigate('settings')}><Settings size={17} />Cài đặt</button><button role="menuitem" onClick={() => { setAccountMenu(false); setLogoutConfirm(true); }}><LogOut size={17} />Đăng xuất</button></div>}</div></div></header>
-    <main id="main-content" ref={mainRef} tabIndex={-1} className={`main-content ${user.role === 'teacher' ? 'teacher-content' : ''}`}>{story ? <Story key={`${story.id}:${story.node.id}`} story={story} onUpdate={setStory} onComplete={value => { setResult(value); setStory(null); void loadData(); }} /> : result ? <ResultScreen result={result} onAchievements={() => navigate('achievements')} onLibrary={() => navigate('library')} onRetry={() => startLesson(result.lessonId)} starting={starting} /> : dataLoading && !lessons.length ? <div className="empty-state"><span className="spinner" /><p>Đang mở thư viện…</p></div> : dataError ? <div className="empty-state"><p role="alert">{dataError}</p><button className="button primary" onClick={loadData}>Thử lại</button></div> : page === 'settings' ? <SettingsPage user={user} onBack={() => navigate('home')} /> : page === 'classes' ? <Classes user={user} /> : page === 'achievements' ? <Achievements attempts={attempts} onOpen={setHistoryId} onLibrary={() => navigate('library')} teacher={user.role === 'teacher'} /> : page === 'home' ? user.role === 'teacher' ? <section className="teacher-home"><span className="eyebrow">BẢNG ĐIỀU KHIỂN GIÁO VIÊN</span><h1>Xin chào, {user.fullName}</h1><p>Quản lý lớp học, xem tiến độ cao nhất và ghi chú riêng cho từng học sinh.</p><button className="button primary" onClick={() => navigate('classes')}>Mở lớp học<ArrowRight size={18} /></button></section> : <><section className="welcome-heading"><span className="eyebrow">CHÀO MỪNG NGƯỜI HÙNG NHÍ</span><h1>Rất vui được gặp em,<br /><span>{user.nickname}!</span></h1><p>Mỗi lựa chọn là một hành trình. Cùng khám phá một điều mới hôm nay nhé.</p></section><div className="home-welcome"><img src="/assets/heroes.webp" alt="Hai người hùng nhí" width="1000" height="979" /><div><span className="pill">CHIẾC KHIÊN CỦA EM</span><h2>Sẵn sàng cho<br />những lựa chọn mới?</h2><p>Những câu chuyện gần gũi giúp em luyện kỹ năng bảo vệ bản thân.</p><button className="button primary" onClick={() => navigate('library')}>Đến thư viện<ArrowRight size={18} /></button></div></div><button className="home-history" onClick={() => navigate('achievements')}><span className="step-icon lavender"><Trophy /></span><span><strong>Nhìn lại hành trình của em</strong><small>Xem nhận xét và lựa chọn trong từng hành trình.</small></span><ArrowRight /></button></> : <Library lessons={lessons} nickname={user.nickname} onOpen={setDetail} teacher={user.role === 'teacher'} />}</main><footer className="app-footer"><span>KIDGUARD VN · Khiên chắn nhí</span></footer></div></div>}
+    <main id="main-content" ref={mainRef} tabIndex={-1} className={`main-content ${user.role === 'teacher' ? 'teacher-content' : ''}`}>{story ? <Story key={`${story.id}:${story.node.id}`} story={story} onUpdate={setStory} onComplete={value => { setResult(value); setStory(null); void loadData(); }} /> : result ? <ResultScreen result={result} onAchievements={() => navigate('achievements')} onLibrary={() => navigate('library')} onRetry={() => startLesson(result.lessonId)} starting={starting} /> : dataLoading && !lessons.length ? <div className="empty-state"><span className="spinner" /><p>Đang mở thư viện…</p></div> : dataError ? <div className="empty-state"><p role="alert">{dataError}</p><button className="button primary" onClick={loadData}>Thử lại</button></div> : page === 'settings' ? <SettingsPage user={user} onBack={() => navigate('home')} /> : page === 'classes' ? <Classes user={user} onDirtyChange={setClassDrafts} /> : page === 'achievements' ? <Achievements attempts={attempts} onOpen={setHistoryId} onLibrary={() => navigate('library')} teacher={user.role === 'teacher'} /> : page === 'home' ? user.role === 'teacher' ? <section className="teacher-home"><span className="eyebrow">BẢNG ĐIỀU KHIỂN GIÁO VIÊN</span><h1>Xin chào, {user.fullName}</h1><p>Quản lý lớp học, xem tiến độ cao nhất và ghi chú riêng cho từng học sinh.</p><button className="button primary" onClick={() => navigate('classes')}>Mở lớp học<ArrowRight size={18} /></button></section> : <><section className="welcome-heading"><span className="eyebrow">CHÀO MỪNG NGƯỜI HÙNG NHÍ</span><h1>Rất vui được gặp em,<br /><span>{user.nickname}!</span></h1><p>Mỗi lựa chọn là một hành trình. Cùng khám phá một điều mới hôm nay nhé.</p></section><div className="home-welcome"><img src="/assets/heroes.webp" alt="Hai người hùng nhí" width="1000" height="979" /><div><span className="pill">CHIẾC KHIÊN CỦA EM</span><h2>Sẵn sàng cho<br />những lựa chọn mới?</h2><p>Những câu chuyện gần gũi giúp em luyện kỹ năng bảo vệ bản thân.</p><button className="button primary" onClick={() => navigate('library')}>Đến thư viện<ArrowRight size={18} /></button></div></div><button className="home-history" onClick={() => navigate('achievements')}><span className="step-icon lavender"><Trophy /></span><span><strong>Nhìn lại hành trình của em</strong><small>Xem nhận xét và lựa chọn trong từng hành trình.</small></span><ArrowRight /></button></> : <Library lessons={lessons} nickname={user.nickname} onOpen={setDetail} teacher={user.role === 'teacher'} />}</main><footer className="app-footer"><span>KIDGUARD VN · Khiên chắn nhí</span></footer></div></div>}
     {error && <div className="toast" role="alert"><span>{error}</span><button className="icon-button" onClick={() => setError('')} aria-label="Đóng thông báo"><X size={18} /></button></div>}
     {auth && !user && <Modal title={auth === 'register' ? 'Tạo tài khoản' : 'Đăng nhập'} onClose={() => setAuth(null)}><AuthForm initialMode={auth} onSuccess={value => { setUser(value); setPage('home'); setAuth(null); setError(''); }} /></Modal>}
     {detail && <Modal title={detail.title} onClose={() => setDetail(null)}><img className="detail-cover" src={detail.cover} alt="" /><span className="pill"><Clock3 size={14} /> {detail.duration}</span><p className="detail-description">{detail.description}</p><button className="button primary full" onClick={() => startLesson(detail.id)} disabled={starting}>{starting ? 'Đang mở…' : 'Bắt đầu bài học'}<Play size={16} /></button></Modal>}
     {historyId && <Modal title={history[0]?.lessonTitle ?? 'Lịch sử làm bài'} onClose={() => setHistoryId(null)} wide><HistoryPanel key={historyId} attempts={history} /></Modal>}
     {help && <Modal title="Cùng em lớn lên an toàn" onClose={() => setHelp(false)}><div className="help-intro"><ShieldCheck size={36} /><p>KIDGUARD VN giúp em luyện cách xử lý tình huống qua những câu chuyện tương tác.</p></div><h3>Bắt đầu như thế nào?</h3><ol className="help-list"><li>Tạo tài khoản bằng biệt danh và tên đăng nhập.</li><li>Vào thư viện, chọn một bài học để bắt đầu.</li><li>Chọn cách xử lý, đọc phản hồi và theo dõi câu chuyện.</li><li>Hoàn thành câu chuyện, xem nhận xét và lựa chọn đã lưu tại Thành tựu của em.</li></ol><div className="help-note"><Heart size={22} /><p>Nếu một chuyện ngoài đời khiến em lo lắng hoặc không an toàn, hãy nói với người lớn em tin tưởng. Em không phải tự xử lý một mình.</p></div><p className="muted small">Phiên bản hiện tại chưa có khôi phục mật khẩu. Em hãy nhờ người lớn tin cậy giúp lưu thông tin đăng nhập ở nơi an toàn.</p></Modal>}
-    {exitConfirm && <Modal title="Tạm dừng câu chuyện?" onClose={() => setExitConfirm(false)}><p>Lượt chưa hoàn thành sẽ không xuất hiện trong lịch sử. Khi quay lại, em sẽ bắt đầu một lượt mới.</p><div className="modal-actions"><button className="button outline" onClick={() => setExitConfirm(false)}>Học tiếp</button><button className="button primary" onClick={() => { setStory(null); setExitConfirm(false); navigate('library'); }}>Về thư viện</button></div></Modal>}
-    {logoutConfirm && <Modal title="Đăng xuất tài khoản?" onClose={() => setLogoutConfirm(false)}>{story && <p>Lượt đang làm dở sẽ cần bắt đầu lại.</p>}<div className="modal-actions"><button className="button outline" onClick={() => setLogoutConfirm(false)}>Ở lại</button><button className="button primary" disabled={loggingOut} onClick={logout}>{loggingOut ? 'Đang đăng xuất…' : 'Đăng xuất'}</button></div></Modal>}
+    {exitConfirm && <Modal title="Tạm dừng câu chuyện?" onClose={() => setExitConfirm(false)}><p>Lượt chưa hoàn thành sẽ không xuất hiện trong lịch sử. Khi quay lại, em sẽ bắt đầu một lượt mới.</p><div className="modal-actions"><button className="button outline" onClick={() => setExitConfirm(false)}>Học tiếp</button><button className="button primary" onClick={() => { setExitConfirm(false); commitNavigation(nextPage); }}>Rời bài học</button></div></Modal>}
+    {discardConfirm && <Modal title="Rời trang khi chưa lưu ghi chú?" onClose={() => setDiscardConfirm(false)}><p>Ghi chú đang soạn sẽ bị bỏ nếu rời trang. Bạn có thể ở lại để lưu trước.</p><div className="modal-actions"><button className="button outline" onClick={() => setDiscardConfirm(false)}>Ở lại</button><button className="button primary" onClick={() => { setDiscardConfirm(false); setClassDrafts(false); commitNavigation(nextPage); }}>Bỏ bản nháp và rời trang</button></div></Modal>}
+    {logoutConfirm && <Modal title="Đăng xuất tài khoản?" onClose={() => setLogoutConfirm(false)}>{story && <p>Lượt đang làm dở sẽ cần bắt đầu lại.</p>}{classDrafts && <p>Ghi chú chưa lưu sẽ bị bỏ khi đăng xuất.</p>}<div className="modal-actions"><button className="button outline" onClick={() => setLogoutConfirm(false)}>Ở lại</button><button className="button primary" disabled={loggingOut} onClick={logout}>{loggingOut ? 'Đang đăng xuất…' : 'Đăng xuất'}</button></div></Modal>}
   </>;
 }

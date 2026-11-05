@@ -10,6 +10,7 @@ services:
       APP_ORIGIN: https://${SITE_DOMAIN:?Set SITE_DOMAIN in .env}
       DATABASE_PATH: /app/data/kidguard.sqlite
       TRUST_PROXY: 1
+      ADMIN_SETUP_SECRET: ${ADMIN_SETUP_SECRET:-}
     volumes:
       - kidguard_data:/app/data
     expose:
